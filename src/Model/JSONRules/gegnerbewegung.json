@@ -1,0 +1,131 @@
+{
+  //Swapling
+  "swaplingwalksright":{
+    "situation":"any",
+    "direction":"east",
+    "original":[
+      {"token":"swapling","values":{"direction":1}},
+      {"token":"path"}
+    ],
+    "result":[
+      {"token":"path","values":{"moved":1}},
+      {"token":"swapling","values":{"moved":1,"direction":1}}
+    ]
+  },
+
+  "swaplingwalksleft":{
+    "situation":"any",
+    "direction":"west",
+    "original":[
+      {"token":"swapling","values":{"direction":3}},
+      {"token":"path"}
+    ],
+    "result":[
+      {"token":"path","values":{"moved":1}},
+      {"token":"swapling","values":{"moved":1,"direction":3}}
+    ]
+  },
+
+  "swaplingturnstoleft":{
+    "situation":"any",
+    "direction":"east",
+    "original":[
+      {"token":"path"},
+      {"token":"swapling","values":{"direction":1}},
+      {"token":["mud","stone","gem","exit","wall","bricks","swapling","blockling","xling"]}
+    ],
+    "result":[
+      {"token":"1","values":{"moved":1,"direction":3}},
+      {"token":"path","values":{"moved":1}},
+      {"token":"2"}
+    ]
+  },
+
+  "swaplingturnstoright":{
+    "situation":"any",
+    "direction":"west",
+    "original":[
+      {"token":"path"},
+      {"token":"swapling","values":{"direction":3}},
+      {"token":["mud","stone","gem","exit","wall","bricks","swapling","blockling","xling"]}
+    ],
+    "result":[
+      {"token":"1","values":{"moved":1,"direction":1}},
+      {"token":"path","values":{"moved":1}},
+      {"token":"2"}
+    ]
+  },
+
+  "swaplingwalksup":{
+    "situation":"any",
+    "direction":"north",
+    "original":[
+      {"token":"swapling","values":{"direction":2}},
+      {"token":"path"}
+    ],
+    "result":[
+      {"token":"path","values":{"moved":1}},
+      {"token":"swapling","values":{"moved":1,"direction":2}}
+    ]
+  },
+
+  "swaplingwalksdown":{
+    "situation":"any",
+    "direction":"south",
+    "original":[
+      {"token":"swapling","values":{"direction":4}},
+      {"token":"path"}
+    ],
+    "result":[
+      {"token":"path","values":{"moved":1}},
+      {"token":"swapling","values":{"moved":1,"direction":4}}
+    ]
+  },
+
+  "swaplingturnsdown":{
+    "situation":"any",
+    "direction":"north",
+    "original":[
+      {"token":"path"},
+      {"token":"swapling","values":{"direction":2}},
+      {"token":["mud","stone","gem","exit","wall","bricks","swapling","blockling","xling"]}
+    ],
+    "result":[
+      {"token":"1","values":{"moved":1},"direction":4},
+      {"token":"path","values":{"moved":1}},
+      {"token":"2"}
+    ]
+  },
+
+  "swaplingturnsup":{
+    "situation":"any",
+    "direction":"south",
+    "original":[
+      {"token":"path"},
+      {"token":"swapling","values":{"direction":4}},
+      {"token":["mud","stone","gem","exit","wall","bricks","swapling","blockling","xling"]}
+    ],
+    "result":[
+      {"token":"1","values":{"moved":1},"direction":2},
+      {"token":"path","values":{"moved":1}},
+      {"token":"2"}
+    ]
+  },
+
+  //Xling
+  //TODO: Immer wenn rechts kein Path (= hier: Gegenstand) und rechts vorne auch ein Gegendstand ist und vorne ein Path, geht Xling nach vorne
+  //TODO: Wenn rechts vorne ein Gegenstand ist und vorne ein Path, geht Xling nach vorne
+  //TODO: Wenn rechts ein Gegenstand ist, rechts vorne und vorne ein Path, geht Xling nach vorne und ändert seine Richtung um 1 im Uhrzeigersinn
+  //TODO: Wenn rechts, vorne und links vorne ein Gegenstand ist und links ein Path, geht Xling nach links und ändert seine Richtung um 1 gegen den Uhrzeigersinn
+  //TODO: Wenn rechts und vorne ein Gegenstand ist und links vorne und links ein Path, geht Xling nach links (Richtung bleibt)
+  //TODO: Wenn rechts, vorne, links und links hinten ein Gegenstand ist und hinten ein Path, geht Xling nach hinten und ändert seine Richtung um 2
+  //TODO: Wenn rechts, vorne und links ein Gegenstand ist und hinten links und hinten ein Path, geht Xling nach hinten und ändert seine Richtung um 1 gegen den Uhrzeigersinn
+  //->directions verallgemeinern und mit Nummern referenzieren, um Platz zu sparen
+  "xling":{
+    "situation":"any",
+    "direction":"east",
+    "original":[
+
+    ]
+  }
+}

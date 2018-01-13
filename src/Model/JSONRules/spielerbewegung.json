@@ -1,0 +1,257 @@
+{
+  //nach rechts
+  "walkright":{
+    "situation":"right",
+    "direction":"east",
+    "original":[
+      {"token":"me"},
+      {"token":["mud","path"]}
+    ],
+    "result":[
+      {"token":"path","values":{"moved":1}},
+      {"token":"me","values":{"moved":1}}
+    ]
+  },
+
+  //nach links
+  "walkleft":{
+    "situation":"left",
+    "direction":"west",
+    "original":[
+      {"token":"me"},
+      {"token":["mud","path"]}
+    ],
+    "result":[
+      {"token":"path","values":{"moved":1}},
+      {"token":"me","values":{"moved":1}}
+    ]
+  },
+
+  //nach oben
+  "walkup":{
+    "situation":"up",
+    "direction":"north",
+    "original":[
+      {"token":"me"},
+      {"token":["mud","path"]}
+    ],
+    "result":[
+      {"token":"path","values":{"moved":1}},
+      {"token":"me","values":{"moved":1}}
+    ]
+  },
+
+  //nach unten
+  "walkdown":{
+    "situation":"down",
+    "direction":"south",
+    "original":[
+      {"token":"me"},
+      {"token":["mud","path"]}
+    ],
+    "result":[
+      {"token":"path","values":{"moved":1}},
+      {"token":"me","values":{"moved":1}}
+    ]
+  },
+
+  //nach rechts shift graben
+  "digright":{
+    "situation":"metaright",
+    "direction":"east",
+    "original":[
+      {"token":"me"},
+      {"token":"mud"}
+    ],
+    "result":[
+      {"token":"me"},
+      {"token":"path"}
+    ]
+  },
+
+  //nach links shift graben
+  "digleft":{
+    "situation":"metaleft",
+    "direction":"west",
+    "original":[
+      {"token":"me"},
+      {"token":"mud"}
+    ],
+    "result":[
+      {"token":"me"},
+      {"token":"path"}
+    ]
+  },
+
+  //nach oben shift graben
+  "digup":{
+    "situation":"metaup",
+    "direction":"north",
+    "original":[
+      {"token":"me"},
+      {"token":"mud"}
+    ],
+    "result":[
+      {"token":"me"},
+      {"token":"path"}
+    ]
+  },
+
+  //nach unten shift graben
+  "digdown":{
+    "situation":"metadown",
+    "direction":"south",
+    "original":[
+      {"token":"me"},
+      {"token":"mud"}
+    ],
+    "result":[
+      {"token":"me"},
+      {"token":"path"}
+    ]
+  },
+
+  //Edelstein nach rechts gehen
+"gemwalkright":{
+  "situation":"right",
+  "direction":"east",
+  "original":[
+    {"token":"me"},
+    {"token":"gem"} //,"values":{"falling":0} hier auch?
+  ],
+  "result":[
+    {"token":"path","values":{"moved":1,"gems":1}}, //TODO: können globale Werte so behandelt werden? Für jedes "gems":1 den globalen Wert gems +1 setzen?
+    {"token":"me","values":{"moved":1}}
+  ]
+},
+
+  //Edelstein nach links gehen
+  "gemwalkleft":{
+    "situation":"left",
+    "direction":"west",
+    "original":[
+      {"token":"me"},
+      {"token":"gem"} //,"values":{"falling":0} hier auch?
+    ],
+    "result":[
+      {"token":"path","values":{"moved":1,"gems":1}}, //TODO: können globale Werte so behandelt werden? Für jedes "gems":1 den globalen Wert gems +1 setzen?
+      {"token":"me","values":{"moved":1}}
+    ]
+  },
+
+  //Edelstein nach oben gehen
+  "gemwalkup":{
+    "situation":"up",
+    "direction":"north",
+    "original":[
+      {"token":"me"},
+      {"token":"gem"} //,"values":{"falling":0} hier auch?
+    ],
+    "result":[
+      {"token":"path","values":{"moved":1,"gems":1}}, //TODO: können globale Werte so behandelt werden? Für jedes "gems":1 den globalen Wert gems +1 setzen?
+      {"token":"me","values":{"moved":1}}
+    ]
+  },
+
+  //Edelstein nach unten gehen
+  "gemwalkdown":{
+    "situation":"down",
+    "direction":"south",
+    "original":[
+      {"token":"me"},
+      {"token":"gem"} //,"values":{"falling":0} hier auch?
+    ],
+    "result":[
+      {"token":"path","values":{"moved":1,"gems":1}}, //TODO: können globale Werte so behandelt werden? Für jedes "gems":1 den globalen Wert gems +1 setzen?
+      {"token":"me","values":{"moved":1}}
+    ]
+  },
+
+  //Edelstein von rechts sammeln
+  "gemgetright":{
+    "situation":"metaright",
+    "direction":"east",
+    "original":[
+      {"token":"me"},
+      {"token":"gem","values":{"falling":0}}
+    ],
+    "result":[
+      {"token":"me","values":{"gems":1}},//TODO: können globale Werte so behandelt werden? Für jedes "gems":1 den globalen Wert gems +1 setzen?
+      {"token":"path"}
+    ]
+},
+
+  //Edelstein von links sammeln
+  "gemgetleft":{
+    "situation":"metaleft",
+    "direction":"west",
+    "original":[
+      {"token":"me"},
+      {"token":"gem","values":{"falling":0}}
+    ],
+    "result":[
+      {"token":"me","values":{"gems":1}},//TODO: können globale Werte so behandelt werden? Für jedes "gems":1 den globalen Wert gems +1 setzen?
+      {"token":"path"}
+    ]
+  },
+
+  //Edelstein von oben sammeln
+  "gemgetup":{
+    "situation":"metaup",
+    "direction":"north",
+    "original":[
+      {"token":"me"},
+      {"token":"gem","values":{"falling":0}}
+    ],
+    "result":[
+      {"token":"me","values":{"gems":1}},//TODO: können globale Werte so behandelt werden? Für jedes "gems":1 den globalen Wert gems +1 setzen?
+      {"token":"path"}
+    ]
+  },
+
+  //Edelstein von unten sammeln
+  "gemgetdown":{
+    "situation":"metadown",
+    "direction":"south",
+    "original":[
+      {"token":"me"},
+      {"token":"gem","values":{"falling":0}}
+    ],
+    "result":[
+      {"token":"me","values":{"gems":1}},//TODO: können globale Werte so behandelt werden? Für jedes "gems":1 den globalen Wert gems +1 setzen?
+      {"token":"path"}
+    ]
+  },
+
+  //etwas nach rechts verschieben
+  "movethingtoright":{
+    "situation":"right",
+    "direction":"east",
+    "original":[
+      {"token":"me"},
+      {"token":"*", "value":{"pushable":1}},
+      {"token":"path"}
+    ],
+    "result":[
+      {"token":"path","values":{"moved":1}},
+      {"token":"me","values":{"moved":1}},
+      {"token":"1","values":{"moved":1}}
+    ]
+  },
+
+  //etwas nach links verschieben
+  "movethingtoleft":{
+    "situation":"left",
+    "direction":"west",
+    "original":[
+      {"token":"me"},
+      {"token":"*", "value":{"pushable":1}},
+      {"token":"path"}
+    ],
+    "result":[
+      {"token":"path","values":{"moved":1}},
+      {"token":"me","values":{"moved":1}},
+      {"token":"1","values":{"moved":1}}
+    ]
+  }
+}
