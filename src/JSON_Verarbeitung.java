@@ -96,9 +96,10 @@ public class JSON_Verarbeitung {
     }
 
     public void read_map(JSONObject jsonObject){
-        JSONArray map = jsonObject.optJSONArray("map");
-        for (int i=0; i<map.length(); i++){
-            JSONArray zeile = map.getJSONArray(i);
+        JSONArray jsonMap = jsonObject.optJSONArray("map");
+        Feld[][] map = new Feld[levelModel.height][levelModel.width];
+        for (int i=0; i<jsonMap.length(); i++){
+            JSONArray zeile = jsonMap.getJSONArray(i);
             for (int j=0; j<zeile.length(); j++){
                 Feld feld = new Feld(null,0,0,0,0,0,0,0,0,0,0,0,0);
                 String token = "";
@@ -256,9 +257,10 @@ public class JSON_Verarbeitung {
                 else if (zeile.equals("sand") || token.equals("sand")) {
                     feld.setToken(Gegenstand.SAND);
                 }
-
-                levelModel.setMap(new Feld[j][i]);
+                map[i][j] = feld;
             }
         }
+        levelModel.setMap(map);
+
     }
 }
