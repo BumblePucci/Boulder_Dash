@@ -41,6 +41,7 @@ public class LevelView implements Observer {
         levelPane.setPrefColumns(levelModel.width);
         levelPane.setPrefRows(levelModel.height);
         fillPane();
+
         //TODO: Eine Scene für ein Level, eine Scene für die Levelübersicht
         Scene scene = new Scene(pane, wScene, hScene);
         Scene levelScene = new Scene(levelPane);
@@ -58,7 +59,7 @@ public class LevelView implements Observer {
         {
             for(int j = 0; j < levelModel.width; j++)
             {
-                Canvas tokenCanvas = new Canvas(50,50);
+                Canvas tokenCanvas = new Canvas(20,20);
                 GraphicsContext gc = tokenCanvas.getGraphicsContext2D();
                 Image image = new Image("file:" + levelModel.getMap()[i][j].getToken().getBildPath());
                 gc.drawImage(image,0,0);
