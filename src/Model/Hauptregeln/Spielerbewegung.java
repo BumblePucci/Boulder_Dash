@@ -57,18 +57,21 @@ public class Spielerbewegung implements Observer {
     }
 
     private boolean checkRowOfThreePushableHori(int x, int y, int richtung, Gegenstand pos, Gegenstand free) {
-        return ((map[richtung*-1][y].getToken().equals(pos) && map[x][y].getPushable() == 1) && map[richtung][y].getToken().equals(free));
+        return ((map[richtung-1][y].getToken().equals(pos) && map[x][y].getPushable() == 1) && map[richtung][y].getToken().equals(free));
     }
 
     public void walk(int x, int y, int richtung){
         //for (int i=0; i<h; i++){          //TODO: anderswo muss diese Methode für alle Felder des 2D-Arrays durchlaufen und überprüft werden, ob sich die hier beschriebenen Felder nicht am Rand des Feldes befinden
           //  for (int j=0; j<w; j++){
-        if (richtung==links || richtung==rechts) {
+        if ((richtung==links || richtung==rechts) && (richtung!=oben || richtung!=unten)) {
+            System.out.println("links oder rechts");
             if (checkRowOfTwoTokenHori(x, y, richtung, ME, PATH) || checkRowOfTwoTokenHori(x, y, richtung, ME, MUD)) {
+                System.out.println("weg erlaubt");
                 map[x][y].setToken(PATH);
                 map[x][y].setMoved(1);
                 map[richtung][y].setToken(ME);
                 map[richtung][y].setMoved(1);
+
             }
         }
         else if (richtung==oben || richtung==unten) {
@@ -79,10 +82,13 @@ public class Spielerbewegung implements Observer {
                 map[x][richtung].setMoved(1);
             }
         }
+        levelModel.setMap(map);
+        System.out.println("x = " + x);
+        System.out.println("y = " + y);
     }
 
     public void dig(int x, int y, int richtung){
-        if (richtung==links || richtung==rechts) {
+        if ((richtung==links || richtung==rechts) && (richtung!=oben || richtung!=unten)) {
             if (checkRowOfTwoTokenHori(x, y, richtung, ME, MUD)) {
                 map[richtung][y].setToken(PATH);
                 map[richtung][y].setMoved(1);
@@ -94,10 +100,11 @@ public class Spielerbewegung implements Observer {
                 map[richtung][y].setMoved(1);
             }
         }
+        levelModel.setMap(map);
     }
 
     public void gemWalk(int x, int y, int richtung){
-        if (richtung==links || richtung==rechts) {
+        if ((richtung==links || richtung==rechts) && (richtung!=oben || richtung!=unten)) {
             if (checkRowOfTwoTokenFallingHori(x, y, richtung, ME, GEM)) {
                 map[x][y].setToken(PATH);
                 map[x][y].setMoved(1);
@@ -115,10 +122,11 @@ public class Spielerbewegung implements Observer {
                 levelModel.gemcounter++;
             }
         }
+        levelModel.setMap(map);
     }
 
     public void gemDig(int x, int y, int richtung){
-        if (richtung==rechts || richtung==links) {
+        if ((richtung==links || richtung==rechts) && (richtung!=oben || richtung!=unten)) {
             if (checkRowOfTwoTokenFallingHori(x, y, richtung, ME, GEM)) {
                 map[richtung][y].setToken(PATH);
                 map[richtung][y].setMoved(1);
@@ -132,20 +140,22 @@ public class Spielerbewegung implements Observer {
                 levelModel.gemcounter++;
             }
         }
+        levelModel.setMap(map);
     }
 
     //hier passt das mit der Richtung schon soweit
     public void moveThing(int x, int y, int richtung){
-        if (richtung==rechts || richtung==links) {
+        if ((richtung==links || richtung==rechts) && (richtung!=oben || richtung!=unten)) {
             if (checkRowOfThreePushableHori(x, y, richtung, ME, PATH)) {
                 map[richtung][y].setToken(map[x][y].getToken());
                 map[richtung][y].setMoved(1);
                 map[x][y].setToken(ME);
                 map[x][y].setMoved(1);
-                map[richtung * -1][y].setToken(PATH);
-                map[richtung * -1][y].setMoved(1);
+                map[richtung  -1][y].setToken(PATH);
+                map[richtung  -1][y].setMoved(1);
             }
         }
+        levelModel.setMap(map);
     }
 
     private void movePlayer(int x, int y){

@@ -33,26 +33,33 @@ public class Handle_Key_Events implements Observer {
         oben = y-1;
         unten = y+1;
         shift = false;
-        spielerbewegung = new Spielerbewegung(levelModel,x,y);
 
 
-        levelView.canvas.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
+
+        levelView.levelScene.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
             if (ev.getCode()==KeyCode.SHIFT) {
                 shift = true;
             }
         });
 
-        levelView.canvas.addEventHandler(KeyEvent.KEY_TYPED, ev -> {
-            for (int i=0; i<levelModel.getMap().length; i++){
-                for (int j=0; j<levelModel.getMap().length; j++) {
-                    if (levelModel.getMap()[i][j].getToken().equals(Gegenstand.ME)) {
-                        x = i;
-                        y = j;
+        levelView.levelScene.addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
+            for (int i=0; i<levelModel.height; i++){
+                for (int j=0; j<levelModel.width; j++) {
+                    if (levelModel.getMap()[j][i].getToken().equals(Gegenstand.ME)) {
+                        x = j;
+                        y = i;
+                        spielerbewegung = new Spielerbewegung(levelModel,x,y);
+                        System.out.println("x = " + x);
+                        System.out.println("y = " + y);
+                        rechts = x+1;
+                        links = x-1;
+                        oben = y-1;
+                        unten = y+1;
                     }
                 }
             }
             if (ev.getCode()== KeyCode.RIGHT){
-                if (shift=true){
+                if (shift){
                     spielerbewegung.dig(x,y,rechts);
                     spielerbewegung.gemDig(x,y,rechts);
                 }
@@ -61,10 +68,11 @@ public class Handle_Key_Events implements Observer {
                     spielerbewegung.gemWalk(x, y, rechts);
                     spielerbewegung.moveThing(x, y, rechts);
                 }
+                levelView.updateToken(y,x,y,rechts);
             }
 
             if (ev.getCode()==KeyCode.LEFT){
-                if (shift=true){
+                if (shift){
                     spielerbewegung.dig(x,y,links);
                     spielerbewegung.gemDig(x,y,links);
                 }
@@ -73,10 +81,11 @@ public class Handle_Key_Events implements Observer {
                     spielerbewegung.gemWalk(x, y, links);
                     spielerbewegung.moveThing(x, y, links);
                 }
+                levelView.updateToken(y,x,y,links);
             }
 
             if (ev.getCode()==KeyCode.UP){
-                if (shift=true){
+                if (shift){
                     spielerbewegung.dig(x,y,oben);
                     spielerbewegung.gemDig(x,y,oben);
                 }
@@ -85,10 +94,11 @@ public class Handle_Key_Events implements Observer {
                     spielerbewegung.gemWalk(x, y, oben);
                     spielerbewegung.moveThing(x, y, oben);
                 }
+                levelView.updateToken(y,x,oben,x);
             }
 
             if (ev.getCode()==KeyCode.DOWN) {
-                if (shift=true){
+                if (shift){
                     spielerbewegung.dig(x,y,unten);
                     spielerbewegung.gemDig(x,y,unten);
                 }
@@ -97,12 +107,14 @@ public class Handle_Key_Events implements Observer {
                     spielerbewegung.gemWalk(x, y, unten);
                     spielerbewegung.moveThing(x, y, unten);
                 }
+                levelView.updateToken(y,x,unten,x);
             }
-
+            shift = false;
         });
 
         levelView.canvas.addEventHandler(KeyEvent.KEY_RELEASED, ev -> {
             if (ev.getCode()==KeyCode.SHIFT) {
+                System.out.println("shift losgelassen");
                 shift = false;
             }
         });
