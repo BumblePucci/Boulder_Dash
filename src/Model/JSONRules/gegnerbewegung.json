@@ -114,10 +114,11 @@
 
   //Xling
   //TODO: Immer wenn rechts kein Path (= hier: Gegenstand) und rechts vorne auch ein Gegendstand ist und vorne ein Path, geht Xling nach vorne
-  //TODO: Wenn rechts vorne ein Gegenstand ist und vorne ein Path, geht Xling nach vorne
+  //TODO: Wenn rechts vorne ein Gegenstand ist und vorne ein Path, geht Xling nach vorne /=
   //TODO: Wenn rechts ein Gegenstand ist, rechts vorne und vorne ein Path, geht Xling nach vorne und ändert seine Richtung um 1 im Uhrzeigersinn
   //TODO: Wenn rechts, vorne und links vorne ein Gegenstand ist und links ein Path, geht Xling nach links und ändert seine Richtung um 1 gegen den Uhrzeigersinn
   //TODO: Wenn rechts und vorne ein Gegenstand ist und links vorne und links ein Path, geht Xling nach links (Richtung bleibt)
+
   //TODO: Wenn rechts, vorne, links und links hinten ein Gegenstand ist und hinten ein Path, geht Xling nach hinten und ändert seine Richtung um 2
   //TODO: Wenn rechts, vorne und links ein Gegenstand ist und hinten links und hinten ein Path, geht Xling nach hinten und ändert seine Richtung um 1 gegen den Uhrzeigersinn
   //->directions verallgemeinern und mit Nummern referenzieren, um Platz zu sparen
