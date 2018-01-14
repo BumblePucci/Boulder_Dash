@@ -49,8 +49,6 @@ public class Handle_Key_Events implements Observer {
                         x = j;
                         y = i;
                         spielerbewegung = new Spielerbewegung(levelModel,x,y);
-                        System.out.println("x = " + x);
-                        System.out.println("y = " + y);
                         rechts = x+1;
                         links = x-1;
                         oben = y-1;

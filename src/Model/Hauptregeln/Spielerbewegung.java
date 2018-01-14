@@ -64,9 +64,7 @@ public class Spielerbewegung implements Observer {
         //for (int i=0; i<h; i++){          //TODO: anderswo muss diese Methode für alle Felder des 2D-Arrays durchlaufen und überprüft werden, ob sich die hier beschriebenen Felder nicht am Rand des Feldes befinden
           //  for (int j=0; j<w; j++){
         if ((richtung==links || richtung==rechts) && (richtung!=oben || richtung!=unten)) {
-            System.out.println("links oder rechts");
             if (checkRowOfTwoTokenHori(x, y, richtung, ME, PATH) || checkRowOfTwoTokenHori(x, y, richtung, ME, MUD)) {
-                System.out.println("weg erlaubt");
                 map[x][y].setToken(PATH);
                 map[x][y].setMoved(1);
                 map[richtung][y].setToken(ME);
@@ -83,8 +81,6 @@ public class Spielerbewegung implements Observer {
             }
         }
         levelModel.setMap(map);
-        System.out.println("x = " + x);
-        System.out.println("y = " + y);
     }
 
     public void dig(int x, int y, int richtung){
@@ -151,8 +147,8 @@ public class Spielerbewegung implements Observer {
                 map[richtung][y].setMoved(1);
                 map[x][y].setToken(ME);
                 map[x][y].setMoved(1);
-                map[richtung  -1][y].setToken(PATH);
-                map[richtung  -1][y].setMoved(1);
+                map[richtung -1][y].setToken(PATH);
+                map[richtung -1][y].setMoved(1);
             }
         }
         levelModel.setMap(map);
