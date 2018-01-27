@@ -29,7 +29,7 @@ public class Main extends Application {
         LevelModel levelModel = new LevelModel(name,width,height,gems,ticks,pre,post,maxslime,map);
         LevelView levelView = new LevelView(levelModel, stage);
         new Controller(levelModel, levelView);
-        GameMenu gameMenu = new GameMenu();
+       // GameMenu gameMenu = new GameMenu();
         new Controller(levelModel, levelView);
 
     }

@@ -2,6 +2,7 @@ package Model.Hauptregeln;
 
 import Model.Feld;
 import Model.Gegenstand;
+import Model.LevelModel;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -10,11 +11,9 @@ import static Model.Gegenstand.*;
 
 public class Spielerbewegung implements Observer {
     private Feld[][] map;
-
     private int gemcounter;
 
     public Spielerbewegung (Feld[][] map, int gemcounter){
-
         this.map=map;
         this.gemcounter=gemcounter;
     }
@@ -44,7 +43,6 @@ public class Spielerbewegung implements Observer {
     //vergleiche den Gegenstand der aktuellen Position mit einem bestimmten Nachbarn, welcher gerade nicht fällt
     private boolean checkRowOfTwoTokenFallingHori(int x, int y, int richtung, Gegenstand pos, Gegenstand nachbar){
         return (map[richtung][y].getMoved()==0 &&
-
                 map[x][y].getToken().equals(pos) && map[richtung][y].getToken().equals(nachbar) &&
                 map[richtung][y].getFalling() == 0);
     }
@@ -83,7 +81,7 @@ public class Spielerbewegung implements Observer {
         int unten = y+1;
         //for (int i=0; i<h; i++){          //TODO: anderswo muss diese Methode für alle Felder des 2D-Arrays durchlaufen und überprüft werden, ob sich die hier beschriebenen Felder nicht am Rand des Feldes befinden
           //  for (int j=0; j<w; j++){
-        if (richtung==links || richtung==rechts) {
+        if (richtung==links || richtung==rechts ) {
             if (checkRowOfTwoTokenHori(x, y, richtung, ME, PATH) || checkRowOfTwoTokenHori(x, y, richtung, ME, MUD)) {
                 map[x][y].setToken(PATH);
                 map[x][y].setMoved(1);
@@ -99,6 +97,7 @@ public class Spielerbewegung implements Observer {
                 map[x][richtung].setMoved(1);
             }
         }
+
     }
 
     //ME gräbt seitlich, ohne sich zu bewegen

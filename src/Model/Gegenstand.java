@@ -1,5 +1,7 @@
 package Model;
 
+import javafx.scene.image.Image;
+
 public enum Gegenstand {
     ME("me", "./resources/me.jpg"), MUD("mud", "./resources/mud.jpg"), STONE("stone", "./resources/stone.jpg"), GEM("gem","./resources/gem.jpg"), EXIT("exit", "./resources/exit.jpg"),
     WALL("wall", "./resources/wall.jpg"), BRICKS("bricks", "./resources/brick.jpg"), PATH("path", "./resources/path.jpg"), EXPLOSION("explosion", "./resources/explosion.jpg"), SLIME("slime", "./resources/slime.jpg"),
@@ -10,16 +12,18 @@ public enum Gegenstand {
 
     private final String typ;
     private final String bildPath;
-    private Gegenstand (String typ, String bildPath){
+    private final Image img;
+    Gegenstand (String typ, String bildPath){
         this.typ=typ;
         this.bildPath = bildPath;
+        this.img = new Image("file:" + bildPath);
     }
 
     public String getTyp() {
         return typ;
     }
 
-    public String getBildPath() {
-        return bildPath;
+    public Image getImg() {
+        return img;
     }
 }

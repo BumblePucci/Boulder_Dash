@@ -103,6 +103,16 @@ public class LevelModel extends Observable {
 
     //Setzt alle Values(Zusatzwerte) zu Beginn eines Ticks zurück
     public void reset(){
+        right = false;
+        left = false;
+        up = false;
+        down = false;
+
+        sRight = false;
+        sLeft = false;
+        sUp = false;
+        sDown = false;
+
         for (int i=0; i<height; i++) {
             for (int j = 0; j < width; j++) {
                 int x = j;
@@ -200,37 +210,53 @@ public class LevelModel extends Observable {
                         if (sRight) {
                             spielerbewegung.dig(x, y, rechts);
                             spielerbewegung.gemDig(x, y, rechts);
+                            setChanged();
+                            notifyObservers();
 
                         } else if (right) {
                             spielerbewegung.walk(x, y, rechts);
                             spielerbewegung.gemWalk(x, y, rechts);
                             spielerbewegung.moveThing(x, y, rechts);
+                            setChanged();
+                            notifyObservers();
 
                         } else if (sLeft) {
                             spielerbewegung.dig(x, y, links);
                             spielerbewegung.gemDig(x, y, links);
+                            setChanged();
+                            notifyObservers();
 
                         } else if (left) {
                             spielerbewegung.walk(x, y, links);
                             spielerbewegung.gemWalk(x, y, links);
                             spielerbewegung.moveThing(x, y, links);
+                            setChanged();
+                            notifyObservers();
 
                         } else if (sUp) {
                             spielerbewegung.dig(x, y, oben);
                             spielerbewegung.gemDig(x, y, oben);
+                            setChanged();
+                            notifyObservers();
 
                         } else if (up) {
                             spielerbewegung.walk(x, y, oben);
                             spielerbewegung.gemWalk(x, y, oben);
                             spielerbewegung.moveThing(x, y, oben);
+                            setChanged();
+                            notifyObservers();
 
                         } else if (sDown) {
                             spielerbewegung.dig(x, y, unten);
                             spielerbewegung.gemDig(x, y, unten);
+                            setChanged();
+                            notifyObservers();
                         } else if (down) {
                             spielerbewegung.walk(x, y, unten);
                             spielerbewegung.gemWalk(x, y, unten);
                             spielerbewegung.moveThing(x, y, unten);
+                            setChanged();
+                            notifyObservers();
                         }
                     }
 
@@ -238,27 +264,40 @@ public class LevelModel extends Observable {
                         gravitation.fall(x, y);
                         gravitation.fallAskew(x, y);
                         gravitation.strike(x, y);
+                        setChanged();
+                        notifyObservers();
                     }
 
                     if (map[x][y].getToken().equals(Gegenstand.SWAPLING)) {
                         gegnerbewegung.swapling(x, y);
+                        setChanged();
+                        notifyObservers();
                     }
                     if (map[x][y].getToken().equals(Gegenstand.XLING)) {
                         gegnerbewegung.xling(x, y);
+                        setChanged();
+                        notifyObservers();
+
                     }
 
                     if (map[x][y].getToken().equals(Gegenstand.BLOCKLING)) {
                         gegnerbewegung.blockling(x,y);
+                        setChanged();
+                        notifyObservers();
+
                     }
 
                     if (map[x][y].getToken().equals(Gegenstand.EXPLOSION)) {
                         explosion.endOrExplode(x, y);
+                        setChanged();
+                        notifyObservers();
+
                     }
+
                 }
             }
         }
-        setChanged();
-        notifyObservers();
+
     }
     //TODO: post-Methode
     public String toString(){

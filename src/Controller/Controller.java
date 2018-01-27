@@ -29,15 +29,16 @@ public class Controller implements Observer {
             if (ev.getCode() == KeyCode.RIGHT) {
                 if (shift) {
                     this.levelModel.setsRight(true);
+                    shift = false;
                 } else {
                     this.levelModel.setRight(true);
-                    System.out.println("rechts gedrückt");
                 }
             }
 
             if (ev.getCode() == KeyCode.LEFT) {
                 if (shift) {
                     this.levelModel.setsLeft(true);
+                    shift = false;
                 } else {
                     this.levelModel.setLeft(true);
                 }
@@ -46,6 +47,7 @@ public class Controller implements Observer {
             if (ev.getCode() == KeyCode.UP) {
                 if (shift) {
                     this.levelModel.setsUp(true);
+                    shift = false;
                 } else {
                     this.levelModel.setUp(true);
                 }
@@ -54,6 +56,7 @@ public class Controller implements Observer {
             if (ev.getCode() == KeyCode.DOWN) {
                 if (shift) {
                     this.levelModel.setsDown(true);
+                    shift = false;
                 } else {
                     this.levelModel.setDown(true);
                 }
@@ -83,7 +86,7 @@ public class Controller implements Observer {
         KeyFrame drawframe = new KeyFrame(Duration.seconds(1/(5* levelModel.getTick())), event -> {
             levelModel.update();
             levelModel.reset();
-            System.out.print(levelModel);
+            //System.out.print(levelModel);
 
         });
         Timeline t1 = new Timeline(drawframe);
