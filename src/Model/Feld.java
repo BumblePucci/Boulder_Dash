@@ -12,13 +12,13 @@ public class Feld extends Observable {
     private int pushable;
     private int bam;
     private int bamrich;
-    private int direction;
+    private Direction direction;
     private int a;
     private int b;
     private int c;
     private int d;
 
-    public Feld(Gegenstand token, int moved, int falling, int loose, int slippery, int pushable, int bam, int bamrich, int direction, int a, int b, int c, int d) {
+    public Feld(Gegenstand token, int moved, int falling, int loose, int slippery, int pushable, int bam, int bamrich, Direction direction, int a, int b, int c, int d) {
         this.token = token;
         this.moved = moved;
         this.falling = falling;
@@ -98,11 +98,11 @@ public class Feld extends Observable {
         this.bamrich = bamrich;
     }
 
-    public int getDirection() {
+    public Direction getDirection() {
         return direction;
     }
 
-    public void setDirection(int direction) {
+    public void setDirection(Direction direction) {
         this.direction = direction;
     }
 

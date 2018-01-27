@@ -2,7 +2,6 @@ package Model.Hauptregeln;
 
 import Model.Feld;
 import Model.Gegenstand;
-import Model.LevelModel;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -10,66 +9,86 @@ import java.util.Observer;
 import static Model.Gegenstand.*;
 
 public class Spielerbewegung implements Observer {
-    LevelModel levelModel;
     private Feld[][] map;
-    private int x;
-    private int y;
-    private int rechts;
-    private int links;
-    private int oben;
-    private int unten;
-    private int w;
-    private int h;
 
-    public Spielerbewegung (LevelModel levelModel, int x, int y){
-        this.levelModel=levelModel;
-        this.x=x;
-        this.y=y;
-        rechts = x+1;
-        links = x-1;
-        oben = y-1;
-        unten = y+1;
-        this.map=levelModel.getMap();
-        this.w = levelModel.width;
-        this.h = levelModel.height;
+    private int gemcounter;
+
+    public Spielerbewegung (Feld[][] map, int gemcounter){
+
+        this.map=map;
+        this.gemcounter=gemcounter;
     }
 
+    public int getGemcounter() {
+        return gemcounter;
+    }
 
     //Methode um später zu checken, ob die Felder innerhalb der Grenzen sind
-    private boolean inBound (int richtung, int size){
-        return (richtung >= 0) && (richtung<size);
+    private boolean inBound (int richtung){
+        return (richtung >= 0) && (richtung<map.length);
     }
 
+    //vergleiche den Gegenstand der aktuellen Position mit einem bestimmten Nachbarn (horizontal/vertikal)
     private boolean checkRowOfTwoTokenHori(int x, int y, int richtung, Gegenstand pos, Gegenstand nachbar){
-        return (map[x][y].getToken().equals(pos) && map[richtung][y].getToken().equals(nachbar));
+        return (map[richtung][y].getMoved()==0 &&
+
+                map[x][y].getToken().equals(pos) && map[richtung][y].getToken().equals(nachbar));
     }
 
     private boolean checkRowOfTwoTokenVerti(int x, int y, int richtung, Gegenstand pos, Gegenstand nachbar){
-        return (map[x][y].getToken().equals(pos) && map[x][richtung].getToken().equals(nachbar));
+        return (map[x][richtung].getMoved()==0 &&
+
+                map[x][y].getToken().equals(pos) && map[x][richtung].getToken().equals(nachbar));
     }
 
+    //vergleiche den Gegenstand der aktuellen Position mit einem bestimmten Nachbarn, welcher gerade nicht fällt
     private boolean checkRowOfTwoTokenFallingHori(int x, int y, int richtung, Gegenstand pos, Gegenstand nachbar){
-        return (map[x][y].getToken().equals(pos) && map[richtung][y].getToken().equals(nachbar) && map[richtung][y].getFalling() == 0);
+        return (map[richtung][y].getMoved()==0 &&
+
+                map[x][y].getToken().equals(pos) && map[richtung][y].getToken().equals(nachbar) &&
+                map[richtung][y].getFalling() == 0);
     }
 
     private boolean checkRowOfTwoTokenFallingVerti(int x, int y, int richtung, Gegenstand pos, Gegenstand nachbar){
-        return (map[x][y].getToken().equals(pos) && map[x][richtung].getToken().equals(nachbar) && map[x][richtung].getFalling() == 0);
+        return (map[x][richtung].getMoved()==0 &&
+
+                map[x][y].getToken().equals(pos) && map[x][richtung].getToken().equals(nachbar) &&
+                map[x][richtung].getFalling() == 0);
     }
 
-    private boolean checkRowOfThreePushableHori(int x, int y, int richtung, Gegenstand pos, Gegenstand free) {
-        return ((map[richtung-1][y].getToken().equals(pos) && map[x][y].getPushable() == 1) && map[richtung][y].getToken().equals(free));
+    //checke, ob ein verschiebbarer Gegenstand in der Nähe ist
+    private boolean checkRowOfThreePushableRechts(int x, int y, Gegenstand pos, Gegenstand free) {
+        int rechts = x+1;
+        int links = x-1;
+        return (map[rechts][y].getMoved()==0 && map[links][y].getMoved()==0 &&
+
+                map[links][y].getToken().equals(pos) && map[x][y].getPushable() == 1 && map[rechts][y].getToken().equals(free));
     }
 
+    private boolean checkRowOfThreePushableLinks(int x, int y, Gegenstand pos, Gegenstand free) {
+        int rechts = x+1;
+        int links = x-1;
+        return (map[rechts][y].getMoved()==0 && map[links][y].getMoved()==0 &&
+
+                map[rechts][y].getToken().equals(pos) && map[x][y].getPushable() == 1 && map[links][y].getToken().equals(free));
+    }
+
+
+
+    //ME läuft in eine Richtung auf einen PATH oder räumt erst den MUD weg und läuft dann auf das Feld
     public void walk(int x, int y, int richtung){
+        int rechts = x+1;
+        int links = x-1;
+        int oben = y-1;
+        int unten = y+1;
         //for (int i=0; i<h; i++){          //TODO: anderswo muss diese Methode für alle Felder des 2D-Arrays durchlaufen und überprüft werden, ob sich die hier beschriebenen Felder nicht am Rand des Feldes befinden
           //  for (int j=0; j<w; j++){
-        if ((richtung==links || richtung==rechts) && (richtung!=oben || richtung!=unten)) {
+        if (richtung==links || richtung==rechts) {
             if (checkRowOfTwoTokenHori(x, y, richtung, ME, PATH) || checkRowOfTwoTokenHori(x, y, richtung, ME, MUD)) {
                 map[x][y].setToken(PATH);
                 map[x][y].setMoved(1);
                 map[richtung][y].setToken(ME);
                 map[richtung][y].setMoved(1);
-
             }
         }
         else if (richtung==oben || richtung==unten) {
@@ -80,11 +99,15 @@ public class Spielerbewegung implements Observer {
                 map[x][richtung].setMoved(1);
             }
         }
-        levelModel.setMap(map);
     }
 
+    //ME gräbt seitlich, ohne sich zu bewegen
     public void dig(int x, int y, int richtung){
-        if ((richtung==links || richtung==rechts) && (richtung!=oben || richtung!=unten)) {
+        int rechts = x+1;
+        int links = x-1;
+        int oben = y-1;
+        int unten = y+1;
+        if (richtung==links || richtung==rechts) {
             if (checkRowOfTwoTokenHori(x, y, richtung, ME, MUD)) {
                 map[richtung][y].setToken(PATH);
                 map[richtung][y].setMoved(1);
@@ -92,21 +115,25 @@ public class Spielerbewegung implements Observer {
         }
         else if (richtung==oben || richtung==unten) {
             if (checkRowOfTwoTokenVerti(x, y, richtung, ME, MUD)) {
-                map[richtung][y].setToken(PATH);
-                map[richtung][y].setMoved(1);
+                map[x][richtung].setToken(PATH);
+                map[x][richtung].setMoved(1);
             }
         }
-        levelModel.setMap(map);
     }
 
+    //ME sammelt GEM, indem es sich auf das Feld des GEMs bewegt
     public void gemWalk(int x, int y, int richtung){
-        if ((richtung==links || richtung==rechts) && (richtung!=oben || richtung!=unten)) {
+        int rechts = x+1;
+        int links = x-1;
+        int oben = y-1;
+        int unten = y+1;
+        if (richtung==links || richtung==rechts) {
             if (checkRowOfTwoTokenFallingHori(x, y, richtung, ME, GEM)) {
                 map[x][y].setToken(PATH);
                 map[x][y].setMoved(1);
                 map[richtung][y].setToken(ME);
                 map[richtung][y].setMoved(1);
-                levelModel.gemcounter++;
+                gemcounter++;
             }
         }
         else if (richtung==oben || richtung==unten) {
@@ -115,65 +142,68 @@ public class Spielerbewegung implements Observer {
                 map[x][y].setMoved(1);
                 map[x][richtung].setToken(ME);
                 map[x][richtung].setMoved(1);
-                levelModel.gemcounter++;
+                gemcounter++;
             }
         }
-        levelModel.setMap(map);
     }
 
+    //ME greift nach GEM, ohne sich zu bewegen
     public void gemDig(int x, int y, int richtung){
-        if ((richtung==links || richtung==rechts) && (richtung!=oben || richtung!=unten)) {
+        int rechts = x+1;
+        int links = x-1;
+        int oben = y-1;
+        int unten = y+1;
+        if (richtung==rechts || richtung==links) {
             if (checkRowOfTwoTokenFallingHori(x, y, richtung, ME, GEM)) {
                 map[richtung][y].setToken(PATH);
                 map[richtung][y].setMoved(1);
-                levelModel.gemcounter++;
+                gemcounter++;
             }
         }
         if (richtung==oben || richtung==unten) {
             if (checkRowOfTwoTokenFallingVerti(x, y, richtung, ME, GEM)) {
                 map[x][richtung].setToken(PATH);
                 map[x][richtung].setMoved(1);
-                levelModel.gemcounter++;
+                gemcounter++;
             }
         }
-        levelModel.setMap(map);
     }
 
+    //TODO: [richtung * -1] hier ist ein Klammerfehler!
     //hier passt das mit der Richtung schon soweit
+
+    /**
+     * ME verschiebt pushable Dinge
+     * @param x wird übergeben
+     * @param y wird übergeben
+     * @param richtung ist hier nur Horizontal, sprich nur links und rechts daneben
+     */
     public void moveThing(int x, int y, int richtung){
-        if ((richtung==links || richtung==rechts) && (richtung!=oben || richtung!=unten)) {
-            if (checkRowOfThreePushableHori(x, y, richtung, ME, PATH)) {
-                map[richtung][y].setToken(map[x][y].getToken());
-                map[richtung][y].setMoved(1);
+        int rechts = x+1;
+        int links = x-1;
+        if (richtung==rechts) {
+            if (checkRowOfThreePushableRechts(x, y, ME, PATH)) {
+                map[rechts][y].setToken(map[x][y].getToken());
+                map[rechts][y].setMoved(1);
                 map[x][y].setToken(ME);
                 map[x][y].setMoved(1);
-                map[richtung -1][y].setToken(PATH);
-                map[richtung -1][y].setMoved(1);
+                map[links][y].setToken(PATH);
+                map[links][y].setMoved(1);
             }
         }
-        levelModel.setMap(map);
+        if (richtung==links){
+            if (checkRowOfThreePushableLinks(x, y, ME, PATH)) {
+                map[links][y].setToken(map[x][y].getToken());
+                map[links][y].setMoved(1);
+                map[x][y].setToken(ME);
+                map[x][y].setMoved(1);
+                map[rechts][y].setToken(PATH);
+                map[rechts][y].setMoved(1);
+            }
+        }
     }
 
-    private void movePlayer(int x, int y){
-        walk(x,y,rechts);
-        walk(x,y,links);
-        walk(x,y,oben);
-        walk(x,y,unten);
-        dig(x,y,rechts);
-        dig(x,y,links);
-        dig(x,y,oben);
-        dig(x,y,unten);
-        gemWalk(x,y,rechts);
-        gemWalk(x,y,links);
-        gemWalk(x,y,oben);
-        gemWalk(x,y,unten);
-        gemDig(x,y,rechts);
-        gemDig(x,y,links);
-        gemDig(x,y,oben);
-        gemDig(x,y,unten);
-        moveThing(x,y,rechts);
-        moveThing(x,y,links);
-    }
+
     public void update(Observable o, Object arg) {}
 
 }

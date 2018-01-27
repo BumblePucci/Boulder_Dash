@@ -1,7 +1,6 @@
 package Model.Hauptregeln;
 
 import Model.Feld;
-import Model.LevelModel;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -9,41 +8,21 @@ import java.util.Observer;
 import static Model.Gegenstand.*;
 
 public class Explosion implements Observer {
-    LevelModel levelModel;
     private Feld[][] map;
-    private int x;
-    private int y;
-    private int rechts;
-    private int links;
-    private int oben;
-    private int unten;
-    private int w;
-    private int h;
 
-    public Explosion (LevelModel levelModel, int x, int y){
-        this.levelModel=levelModel;
-        this.x=x;
-        this.y=y;
-        rechts = x+1;
-        links = x-1;
-        oben = y-1;
-        unten = y+1;
-        this.map=levelModel.getMap();
-        this.w = levelModel.width;
-        this.h = levelModel.height;
+    public Explosion (Feld[][] map){
+        this.map=map;
     }
 
     private boolean checkWallExit (int x, int y){
-        return (map[x][y].getToken().equals(ME) || map[x][y].getToken().equals(MUD) || map[x][y].getToken().equals(STONE)) ||
-                map[x][y].getToken().equals(GEM) || map[x][y].getToken().equals(BRICKS) || map[x][y].getToken().equals(PATH) ||
-                map[x][y].getToken().equals(EXPLOSION) || map[x][y].getToken().equals(SLIME) || map[x][y].getToken().equals(SWAPLING) ||
-                map[x][y].getToken().equals(BLOCKLING) || map[x][y].getToken().equals(XLING) || map[x][y].getToken().equals(GHOSTLING) ||
-                map[x][y].getToken().equals(FIRE) || map[x][y].getToken().equals(NORTHTHING) || map[x][y].getToken().equals(EASTTHING) ||
-                map[x][y].getToken().equals(SOUTHTHING) || map[x][y].getToken().equals(WESTTHING) || map[x][y].getToken().equals(POT) ||
-                map[x][y].getToken().equals(SIEVE) || map[x][y].getToken().equals(SAND);
+        return (!(map[x][y].getToken().equals(WALL) || map[x][y].getToken().equals(EXIT)));
     }
 
     public void endOrExplode (int x, int y){
+        int rechts = x+1;
+        int links = x-1;
+        int oben = y-1;
+        int unten = y+1;
         if (map[x][y].getToken().equals(EXPLOSION) && map[x][y].getBam()==0 && map[x][y].getBamrich()==0){
             map[x][y].setToken(PATH);
             map[x][y].setMoved(1);

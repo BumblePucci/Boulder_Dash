@@ -1,4 +1,5 @@
 
+import Model.Direction;
 import Model.Feld;
 import Model.LevelModel;
 import Model.Gegenstand;
@@ -11,12 +12,60 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class JSON_Verarbeitung {
-    private LevelModel levelModel;
 
-    public JSON_Verarbeitung(LevelModel levelModel) {
-        this.levelModel = levelModel;
+    private String name;
+    private int width;
+    private int height;
+    private int[] gems = new int[3];
+    private int[] ticks = new int[3];
+    private List<List<String>> pre = new ArrayList<>();  //Sind es wirklich STRINGlisten?
+    private List<List<String>> post = new ArrayList<>();
+    private int maxslime;
+    private Feld[][] map = new Feld[width][height];
+
+    public JSON_Verarbeitung() {
 
         //levelModel.addObserver(this);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int[] getGems() {
+        return gems;
+    }
+
+    public int[] getTicks() {
+        return ticks;
+    }
+
+    public List<List<String>> getPre() {
+        return pre;
+    }
+
+    public List<List<String>> getPost() {
+        return post;
+    }
+
+    public int getMaxslime() {
+        return maxslime;
+    }
+
+    public Feld[][] getMap() {
+        return map;
+    }
+
+    public void setMap(Feld[][] map) {
+        this.map = map;
     }
 
     //JSON-File wird eingelesen
@@ -37,24 +86,24 @@ public class JSON_Verarbeitung {
 
     public void read_name(JSONObject jsonObject){
         String name = jsonObject.getString("name");
-        levelModel.name = name;
+        this.name = name;
     }
 
     public void read_width(JSONObject jsonObject){
         int width = jsonObject.getInt("width");
-        levelModel.width = width;
+        this.width = width;
     }
 
     public void read_height(JSONObject jsonObject){
         int height = jsonObject.getInt("height");
-        levelModel.height = height;
+        this.height = height;
     }
 
     public void read_gems(JSONObject jsonObject){
         JSONArray gems = jsonObject.optJSONArray("gems");
         for (int i=0; i<gems.length(); i++){
             int agem = gems.getInt(i);
-            levelModel.gems[i] = agem;
+            this.gems[i] = agem;
         }
     }
 
@@ -62,7 +111,7 @@ public class JSON_Verarbeitung {
         JSONArray ticks = jsonObject.optJSONArray("ticks");
         for (int i=0; i<ticks.length(); i++){
             int atick = ticks.getInt(i);
-            levelModel.ticks[i] = atick;
+            this.ticks[i] = atick;
         }
     }
 
@@ -73,7 +122,7 @@ public class JSON_Verarbeitung {
             for (int i=0; i<pre.length(); i++){
                 apre.add(pre.getString(i));
             }
-            levelModel.pre.add(apre);
+            this.pre.add(apre);
         }
     }
 
@@ -84,24 +133,24 @@ public class JSON_Verarbeitung {
             for (int i=0; i<post.length(); i++){
                 apost.add(post.getString(i));
             }
-            levelModel.post.add(apost);
+            this.post.add(apost);
         }
     }
 
     public void read_maxslime(JSONObject jsonObject){
         if (jsonObject.has("maxslime")){
             int maxslime = jsonObject.getInt("maxslime");
-            levelModel.maxslime = maxslime;
+            this.maxslime = maxslime;
         }
     }
 
     public void read_map(JSONObject jsonObject){
         JSONArray jsonMap = jsonObject.optJSONArray("map");
-        Feld[][] map = new Feld[levelModel.width][levelModel.height];
-        for (int i=0; i<jsonMap.length(); i++){
+        Feld[][] map = new Feld[this.width][this.height];
+        for (int i=0; i<this.height; i++){
             JSONArray zeile = jsonMap.getJSONArray(i);
-            for (int j=0; j<zeile.length(); j++){
-                Feld feld = new Feld(null,0,0,0,0,0,0,0,0,0,0,0,0);
+            for (int j=0; j<width; j++){
+                Feld feld = new Feld(null,0,0,0,0,0,0,0, Direction.NO,0,0,0,0);
                 String token = "";
                 if (zeile.get(j) instanceof JSONObject) {
                     JSONObject afeld = zeile.getJSONObject(j);
@@ -143,7 +192,21 @@ public class JSON_Verarbeitung {
 
                     if (values.has("direction")) {
                         int direction = values.getInt("direction");
-                        feld.setDirection(direction);
+                        if (direction==0) {
+                            feld.setDirection(Direction.NO);
+                        }
+                        else if (direction==1) {
+                            feld.setDirection(Direction.RECHTS);
+                        }
+                        else if (direction==2) {
+                            feld.setDirection(Direction.OBEN);
+                        }
+                        else if (direction==3) {
+                            feld.setDirection(Direction.LINKS);
+                        }
+                        else if (direction==4) {
+                            feld.setDirection(Direction.UNTEN);
+                        }
                     }
 
                     if (values.has("a")) {
@@ -170,7 +233,7 @@ public class JSON_Verarbeitung {
                 if (zeile.get(j).equals("foo")) {
                     //JSONObject afeld = zeile.getJSONObject(j);
                     feld.setToken(null);
-                    feld.setDirection(0);
+                    feld.setDirection(Direction.NO);
                 }
                 else if (zeile.get(j).equals("me") || token.equals("me")) {
                     feld.setToken(Gegenstand.ME);
@@ -259,9 +322,8 @@ public class JSON_Verarbeitung {
                 }
                 map[j][i] = feld;
             }
-
         }
-        levelModel.setMap(map);
+        this.setMap(map);
 
     }
 }
