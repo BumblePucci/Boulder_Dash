@@ -120,6 +120,7 @@ public class Spielerbewegung implements Observer {
                 setResult(x,y,richtung,PATH);
                 if (checkRowOfTwoToken(x,y,richtung,ME,GEM)) {
                     gemcounter++;
+                    System.out.println("gem gefunden!!!!!!!!!!!!!!!!!!!!!!!");
                 }
             }
         } else {
@@ -129,6 +130,7 @@ public class Spielerbewegung implements Observer {
                 resetOrigin(x, y);
                 if (checkRowOfTwoToken(x, y, richtung, ME, GEM)) {
                     gemcounter++;
+                    System.out.println("gem gefunden!!!!!!!!!!!!!!!!!!!!!!!");
                 }
             }
 

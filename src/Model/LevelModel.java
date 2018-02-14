@@ -264,13 +264,14 @@ public class LevelModel extends Observable {
     //TODO: post-Methode
     public String toString(){
         String s ="";
-        for(int i=0; i<height; i++){
+        /*for(int i=0; i<height; i++){
             s+="|";
             for(int j = 0; j<width; j++){
                 s=s+ map[j][i].getToken() + "|";
             }
-            s+="\n";
-        }
+            s+="\n";*/
+            s+="Gems " + spielerbewegung.getGemcounter();
+
         return s;
     }
 }
