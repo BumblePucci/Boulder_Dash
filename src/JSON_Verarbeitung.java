@@ -1,7 +1,6 @@
 
 import Model.Direction;
 import Model.Feld;
-import Model.LevelModel;
 import Model.Gegenstand;
 import org.JSONArray;
 import org.JSONObject;
@@ -196,16 +195,16 @@ public class JSON_Verarbeitung {
                             feld.setDirection(Direction.NO);
                         }
                         else if (direction==1) {
-                            feld.setDirection(Direction.RECHTS);
+                            feld.setDirection(Direction.OSTEN);
                         }
                         else if (direction==2) {
-                            feld.setDirection(Direction.OBEN);
+                            feld.setDirection(Direction.NORDEN);
                         }
                         else if (direction==3) {
-                            feld.setDirection(Direction.LINKS);
+                            feld.setDirection(Direction.WESTEN);
                         }
                         else if (direction==4) {
-                            feld.setDirection(Direction.UNTEN);
+                            feld.setDirection(Direction.SUEDEN);
                         }
                     }
 

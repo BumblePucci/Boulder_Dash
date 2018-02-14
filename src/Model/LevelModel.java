@@ -1,14 +1,13 @@
 package Model;
 
-import Model.Hauptregeln.Explosion;
-import Model.Hauptregeln.Gegnerbewegung;
-import Model.Hauptregeln.Gravitation;
-import Model.Hauptregeln.Spielerbewegung;
+import Model.Hauptregeln.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Observable;
+
+import static Model.Pfeil.*;
 
 public class LevelModel extends Observable {
 
@@ -29,6 +28,7 @@ public class LevelModel extends Observable {
     private Gravitation gravitation;
     private Gegnerbewegung gegnerbewegung;
     private Explosion explosion;
+    private Slime slime;
 
 
     public LevelModel(String name, int width, int height, int[] gems, int[] ticks, List<List<String>> pre,
@@ -50,6 +50,7 @@ public class LevelModel extends Observable {
         gravitation = new Gravitation(map);
         gegnerbewegung = new Gegnerbewegung(map);
         explosion = new Explosion(map);
+        slime = new Slime(map);
     }
 
     public String getName() {
@@ -154,37 +155,12 @@ public class LevelModel extends Observable {
     private boolean sUp = false;
     private boolean sDown = false;
 
-    public void setRight(boolean right) {
-        this.right = right;
+    private Pfeil pfeil = NO;
+
+    public void setPfeil(Pfeil pfeil) {
+        this.pfeil = pfeil;
     }
 
-    public void setLeft(boolean left) {
-        this.left = left;
-    }
-
-    public void setUp(boolean up) {
-        this.up = up;
-    }
-
-    public void setDown(boolean down) {
-        this.down = down;
-    }
-
-    public void setsRight(boolean sRight) {
-        this.sRight = sRight;
-    }
-
-    public void setsLeft(boolean sLeft) {
-        this.sLeft = sLeft;
-    }
-
-    public void setsUp(boolean sUp) {
-        this.sUp = sUp;
-    }
-
-    public void setsDown(boolean sDown) {
-        this.sDown = sDown;
-    }
 
     //Methode um später zu checken, ob die Felder innerhalb der Grenzen sind
     private boolean inBoundHori (int richtung){
@@ -196,6 +172,7 @@ public class LevelModel extends Observable {
     }
 
     public void update(){
+        boolean slimeLocked=false;
         for (int i=0; i<height; i++){
             for (int j=0; j<width; j++) {
                 int x = j;
@@ -205,92 +182,46 @@ public class LevelModel extends Observable {
                 int oben = y-1;
                 int unten = y+1;
 
+
                 if (map[x][y].getMoved()==0) {
                     if (map[x][y].getToken().equals(Gegenstand.ME)) {
-                        if (sRight) {
-                            spielerbewegung.dig(x, y, rechts);
-                            spielerbewegung.gemDig(x, y, rechts);
-                            setChanged();
-                            notifyObservers();
-
-                        } else if (right) {
-                            spielerbewegung.walk(x, y, rechts);
-                            spielerbewegung.gemWalk(x, y, rechts);
-                            spielerbewegung.moveThing(x, y, rechts);
-                            setChanged();
-                            notifyObservers();
-
-                        } else if (sLeft) {
-                            spielerbewegung.dig(x, y, links);
-                            spielerbewegung.gemDig(x, y, links);
-                            setChanged();
-                            notifyObservers();
-
-                        } else if (left) {
-                            spielerbewegung.walk(x, y, links);
-                            spielerbewegung.gemWalk(x, y, links);
-                            spielerbewegung.moveThing(x, y, links);
-                            setChanged();
-                            notifyObservers();
-
-                        } else if (sUp) {
-                            spielerbewegung.dig(x, y, oben);
-                            spielerbewegung.gemDig(x, y, oben);
-                            setChanged();
-                            notifyObservers();
-
-                        } else if (up) {
-                            spielerbewegung.walk(x, y, oben);
-                            spielerbewegung.gemWalk(x, y, oben);
-                            spielerbewegung.moveThing(x, y, oben);
-                            setChanged();
-                            notifyObservers();
-
-                        } else if (sDown) {
-                            spielerbewegung.dig(x, y, unten);
-                            spielerbewegung.gemDig(x, y, unten);
-                            setChanged();
-                            notifyObservers();
-                        } else if (down) {
-                            spielerbewegung.walk(x, y, unten);
-                            spielerbewegung.gemWalk(x, y, unten);
-                            spielerbewegung.moveThing(x, y, unten);
-                            setChanged();
-                            notifyObservers();
-                        }
+                        spielerbewegung.walk(x,y,pfeil);
                     }
 
-                    if (map[x][y].getLoose() == 1) {
-                        gravitation.fall(x, y);
-                        gravitation.fallAskew(x, y);
-                        gravitation.strike(x, y);
-                        setChanged();
-                        notifyObservers();
+                    else if (map[x][y].getLoose() == 1) {
+                        gravitation.gravitate(x,y);
+
                     }
 
-                    if (map[x][y].getToken().equals(Gegenstand.SWAPLING)) {
+                    else if (map[x][y].getToken().equals(Gegenstand.SWAPLING)) {
                         gegnerbewegung.swapling(x, y);
-                        setChanged();
-                        notifyObservers();
-                    }
-                    if (map[x][y].getToken().equals(Gegenstand.XLING)) {
-                        gegnerbewegung.xling(x, y);
-                        setChanged();
-                        notifyObservers();
 
                     }
-
-                    if (map[x][y].getToken().equals(Gegenstand.BLOCKLING)) {
-                        gegnerbewegung.blockling(x,y);
-                        setChanged();
-                        notifyObservers();
-
+                    else if (map[x][y].getToken().equals(Gegenstand.XLING)) {
+                        gegnerbewegung.xlingOrBlockling(x, y,Gegenstand.XLING);
+                        //System.out.println(map[x][y].getDirection());
                     }
 
-                    if (map[x][y].getToken().equals(Gegenstand.EXPLOSION)) {
+                    else if (map[x][y].getToken().equals(Gegenstand.BLOCKLING)) {
+                        gegnerbewegung.xlingOrBlockling(x,y,Gegenstand.BLOCKLING);
+                    }
+
+                    else if (map[x][y].getToken().equals(Gegenstand.EXPLOSION)) {
                         explosion.endOrExplode(x, y);
-                        setChanged();
-                        notifyObservers();
+
+
+                    }
+
+                    else if (map[x][y].getToken().equals(Gegenstand.SLIME)) {
+                        slime.spreadSlime(x,y);
+
+                        //TODO: mit Rekursion arbeiten
+                        if (slime.checkIfTurnToGems(x,y)){
+                            slimeLocked=true;
+                        }
+                        else {
+                            slimeLocked=false;
+                        }
 
                     }
 
@@ -298,7 +229,38 @@ public class LevelModel extends Observable {
             }
         }
 
+        if (slimeLocked) {
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    int x = j;
+                    int y = i;
+                    if (map[x][y].getToken().equals(Gegenstand.SLIME)) {
+                        map[x][y].setToken(Gegenstand.GEM);
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                int slimeCounter=0;
+                int x = j;
+                int y = i;
+                if (map[x][y].getToken().equals(Gegenstand.SLIME)) {
+                    slimeCounter++;
+                    if (slimeCounter > maxslime) {
+                        //TODO: Zugriff auf alle Slimes ermöglichen, wieder außerhalb der for-Schleifen?
+                        map[x][y].setToken(Gegenstand.STONE);
+                    }
+                }
+            }
+        }
+
+        setChanged();
+        notifyObservers();
     }
+
+
     //TODO: post-Methode
     public String toString(){
         String s ="";

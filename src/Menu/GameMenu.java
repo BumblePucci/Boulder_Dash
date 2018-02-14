@@ -1,19 +1,15 @@
 package Menu;
 
-import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
-import javafx.scene.control.MenuItem;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -24,20 +20,15 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.util.Duration;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-
-import static java.awt.SystemColor.text;
 
 /**
  * Created by sakinakamilova on 14.01.18.
  */
+
+//Todo: teilen von Scene
 public class GameMenu extends Application {
 
-    private static final Font FONT = Font.font("", FontWeight.BOLD, 20);
+    private static final Font FONT = Font.font("", FontWeight.BOLD, 20); // Todo: ändern
     private VBox menuList; // die liste
 
 
@@ -47,17 +38,18 @@ public class GameMenu extends Application {
         Rectangle bg = new Rectangle(600, 400); // hintergrund_Rechteck
 
 
-
         ContentFrame frame = new ContentFrame(createMainContent());
+
+
 
         HBox hbox = new HBox(15, frame);
         hbox.setTranslateX(200);
         hbox.setTranslateY(50);
 
-        MenuItem itemExit = new MenuItem("EXIT");
-        itemExit.setOnActivate(() -> System.exit(0));
-        itemExit.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-            setActivateMenuItem(itemExit);
+        MenuItem exitItem = new MenuItem("EXIT");
+        exitItem.setOnActivate(() -> System.exit(0));
+        exitItem.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            setActivateMenuItem(exitItem);
             System.exit(0);
         });
 
@@ -75,11 +67,14 @@ public class GameMenu extends Application {
             //woher weiß man, in welchem Level der Spieler ist?
             //wie springt man wieder in ein Level?
 
+
+
             GridPane gridPane = new GridPane();
             int numberOfLevels = 12;
             int numberOfButtonsInARow = 4;
-            int levelReached = 3;
+            int levelReached = 2;
 
+            //Todo: statt schloss, türen (offene und geschlossene)
             Image lockClosed = new Image(getClass().getResourceAsStream("lockClosedSmall.png"));
 
             for (int i = 0; i < numberOfLevels; i++) {
@@ -93,14 +88,12 @@ public class GameMenu extends Application {
                 if (i > levelReached) {
                     b.setGraphic(new ImageView(lockClosed));
                 } else {
-                    b.setText(new Integer(i+1).toString());
+                    b.setText(new Integer(i + 1).toString());
                 }
-                b.setMinSize(50,50);
+                b.setMinSize(50, 50);
                 gridPane.add(b, column, row);
 
             }
-
-
 
             Scene scene = new Scene(gridPane, 300, 275);
             Stage stage = new Stage();
@@ -108,7 +101,7 @@ public class GameMenu extends Application {
             stage.show();
         });
 
-        menuList = new VBox(10, continueItem, levelsItem, itemExit);
+        menuList = new VBox(10, continueItem, levelsItem, exitItem);
         menuList.setAlignment(Pos.TOP_CENTER);
         menuList.setTranslateX(240);
         menuList.setTranslateY(300);
@@ -140,23 +133,13 @@ public class GameMenu extends Application {
             letter.setFill(Color.LIGHTGREEN);
             letters.getChildren().add(letter);
 
-            TranslateTransition tt = new TranslateTransition(Duration.seconds(2), letter); // animatin
-            // einzelner
-            // buchstaben
-            tt.setDelay(Duration.millis(i * 50));// Welle
-            tt.setToY(-25); // grenze
-            tt.setAutoReverse(true);
-            tt.setCycleCount(TranslateTransition.INDEFINITE);// für immer
-            // abspielen
-            tt.play();
+
         }
         return letters;
     }
 
     private MenuItem getMenuItem(int index) {
-        return (MenuItem) menuList.getChildren().get(index); // menü box, welchen
-        // oben definiert
-        // wird
+        return (MenuItem) menuList.getChildren().get(index); // menü box, welchen oben definiert wird
     }// menuItem, weil oben die menuItems sind
 
     private static class ContentFrame extends StackPane {
@@ -185,17 +168,15 @@ public class GameMenu extends Application {
             text = new Text(name);
             text.setFont(FONT);
 
-            getChildren().addAll(c1, text, c2); // c1= linker Kreis; dann Text;
-            // dann c2=rechter Kreis
+            getChildren().addAll(c1, text, c2); // c1= linker Kreis; dann Text; dann c2=rechter Kreis
             setActive(false);
-            setOnActivate(() -> System.out.println(name + " aktiviert"));
+            // setOnActivate(() -> System.out.println(name + " aktiviert"));
         }
 
         public void setActive(boolean b) {
             c1.setVisible(b);
             c2.setVisible(b);
-            text.setFill(b ? Color.WHITE : Color.GREY); // aktiv=weis; nicht
-            // aktiv=grau
+            text.setFill(b ? Color.WHITE : Color.GREY); // aktiv=weis; nicht aktiv=grau
         }
 
         public void setOnActivate(Runnable r) {
@@ -204,19 +185,16 @@ public class GameMenu extends Application {
 
         public void activate() {
             if (script != null) // Wenn nicht null dann
-                script.run();// runt der script
+                script.run();// runnt der script
         }
     }
 
+    //Todo: diamant statt kreis
     // drei kreise werden gezeichnet
     private static class TriCircle extends Parent {
         public TriCircle() {
             // unten links, keine bewegung
-            Shape shape1 = Shape.subtract(new Circle(5), new Circle(2)); // großer
-            // kreis
-            // minus
-            // kleiner
-            // K
+            Shape shape1 = Shape.subtract(new Circle(5), new Circle(2)); // großer kreis minus kleiner K
             shape1.setFill(Color.WHITE);
 
             // unten Rechts

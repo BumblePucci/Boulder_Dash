@@ -1,7 +1,7 @@
 package Model;
 
 public enum Direction {
-    NO(0),RECHTS(1),OBEN(2),LINKS(3),UNTEN(4);
+    NO(0), OSTEN(1), NORDEN(2), WESTEN(3), SUEDEN(4);
 
     private final int number;
 

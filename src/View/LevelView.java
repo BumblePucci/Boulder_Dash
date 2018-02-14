@@ -53,7 +53,8 @@ public class LevelView implements Observer {
 
 
     }
-
+    //alle Token aus SpielfeldMap in ViewMap speichern
+    //bei Änderungen kann Spielfeld auf Änderungen überprüft werden
     private void updateViewMap() {
         for(int i = 0; i < levelModel.getHeight(); i++)
         {
@@ -64,7 +65,7 @@ public class LevelView implements Observer {
         }
     }
 
-
+    //Token auf Spielfeld anzeigen
     private void fillPane() {
         for (int i = 0; i < levelModel.getHeight(); i++) {
             for (int j = 0; j < levelModel.getWidth(); j++) {
@@ -79,6 +80,8 @@ public class LevelView implements Observer {
         updateViewMap();
     }
 
+    //Vergleicht alte und neue Map (viewMap und levelModel Map)
+    //View angepasst mit neuem Token
     public void updateToken()
     {
         for (int i=0; i<levelModel.getHeight(); i++) {
@@ -88,7 +91,8 @@ public class LevelView implements Observer {
                 if(!viewMap[x][y].getTyp().equals(levelModel.getMap()[x][y].getToken().getTyp()))
                 {
                     int mapWidth = levelModel.getWidth();
-                    int pos = mapWidth*y + x;
+                    int pos = mapWidth*y + x; //Stelle berechnen fuer LevelPane - Koordinate im ein Dimensionalen Array
+                    //Breite Zeile * Stelle auf y + Position in Zeile x
                     ImageView token = (ImageView) levelPane.getChildren().get(pos);
                     token.setImage(levelModel.getMap()[x][y].getToken().getImg());
                     token.setFitWidth(Math.round(wLevelPane/levelModel.getWidth()));
@@ -103,7 +107,7 @@ public class LevelView implements Observer {
     }
 
 
-        public void update(Observable o, Object arg) {
+    public void update(Observable o, Object arg) {
         updateToken();
     }
 

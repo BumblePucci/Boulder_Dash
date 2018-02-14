@@ -11,6 +11,8 @@ import javafx.util.Duration;
 import java.util.Observable;
 import java.util.Observer;
 
+import static Model.Pfeil.*;
+
 public class Controller implements Observer {
     private LevelView levelView;
     private LevelModel levelModel;
@@ -28,37 +30,37 @@ public class Controller implements Observer {
             }
             if (ev.getCode() == KeyCode.RIGHT) {
                 if (shift) {
-                    this.levelModel.setsRight(true);
+                    this.levelModel.setPfeil(SRIGHT);
                     shift = false;
                 } else {
-                    this.levelModel.setRight(true);
+                    this.levelModel.setPfeil(RIGHT);
                 }
             }
 
             if (ev.getCode() == KeyCode.LEFT) {
                 if (shift) {
-                    this.levelModel.setsLeft(true);
+                    this.levelModel.setPfeil(SLEFT);
                     shift = false;
                 } else {
-                    this.levelModel.setLeft(true);
+                    this.levelModel.setPfeil(LEFT);
                 }
             }
 
             if (ev.getCode() == KeyCode.UP) {
                 if (shift) {
-                    this.levelModel.setsUp(true);
+                    this.levelModel.setPfeil(SUP);
                     shift = false;
                 } else {
-                    this.levelModel.setUp(true);
+                    this.levelModel.setPfeil(UP);
                 }
             }
 
             if (ev.getCode() == KeyCode.DOWN) {
                 if (shift) {
-                    this.levelModel.setsDown(true);
+                    this.levelModel.setPfeil(SDOWN);
                     shift = false;
                 } else {
-                    this.levelModel.setDown(true);
+                    this.levelModel.setPfeil(DOWN);
                 }
             }
 
@@ -70,23 +72,17 @@ public class Controller implements Observer {
 
         this.levelView.getStage().addEventHandler(KeyEvent.KEY_RELEASED, ev -> {
             if (ev.getCode()==KeyCode.SHIFT) {
-                this.levelModel.setRight(false);
-                this.levelModel.setLeft(false);
-                this.levelModel.setUp(false);
-                this.levelModel.setDown(false);
-
-                this.levelModel.setsRight(false);
-                this.levelModel.setsLeft(false);
-                this.levelModel.setsUp(false);
-                this.levelModel.setsDown(false);
+                this.levelModel.setPfeil(NO);
             }
         });
 
 
         KeyFrame drawframe = new KeyFrame(Duration.seconds(1/(5* levelModel.getTick())), event -> {
-            levelModel.update();
+        //KeyFrame drawframe = new KeyFrame(Duration.seconds(1), event -> {
             levelModel.reset();
-            //System.out.print(levelModel);
+            levelModel.update();
+            System.out.print(levelModel);
+            System.out.println("-");
 
         });
         Timeline t1 = new Timeline(drawframe);

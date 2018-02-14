@@ -52,7 +52,13 @@ public class Gravitation implements Observer {
         return (!(map[x][y].getToken().equals(WALL) || map[x][y].getToken().equals(EXIT)));
     }
 
-    public void fall (int x, int y){
+    public void gravitate (int x, int y){
+        fall(x,y);
+        fallAskew(x,y);
+        strike(x,y);
+    }
+
+    private void fall (int x, int y){
         int unten = y+1;
         if(checkRowOfTwoLoose(x,y)){
             map[x][unten].setToken(map[x][y].getToken());
@@ -63,7 +69,7 @@ public class Gravitation implements Observer {
         }
     }
 
-    public void fallAskew (int x, int y){
+    private void fallAskew (int x, int y){
         int rechts = x+1;
         int links = x-1;
         int oben = y-1;
@@ -83,7 +89,7 @@ public class Gravitation implements Observer {
         }
     }
 
-    public void strike (int x, int y){
+    private void strike (int x, int y){
         int rechts = x+1;
         int links = x-1;
         int oben = y-1;

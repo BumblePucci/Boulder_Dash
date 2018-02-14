@@ -30,7 +30,6 @@ public class Main extends Application {
         LevelView levelView = new LevelView(levelModel, stage);
         new Controller(levelModel, levelView);
        // GameMenu gameMenu = new GameMenu();
-        new Controller(levelModel, levelView);
 
     }
 
