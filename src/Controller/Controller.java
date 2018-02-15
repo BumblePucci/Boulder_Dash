@@ -1,5 +1,9 @@
 package Controller;
 
+import Menu.Level;
+import Menu.MenuController;
+import Model.Daten;
+import Model.Hauptregeln.Spielerbewegung;
 import Model.LevelModel;
 import View.LevelView;
 import javafx.animation.KeyFrame;
@@ -16,12 +20,21 @@ import static Model.Pfeil.*;
 public class Controller implements Observer {
     private LevelView levelView;
     private LevelModel levelModel;
+    private MenuController menuController;
+    private Level level;
     private boolean shift;
+    private boolean doorIsOpen;
+    private  int pGes;
 
     public Controller(LevelModel levelModel, LevelView levelView) {
         this.levelModel = levelModel;
         this.levelView = levelView;
+        this.levelModel = levelModel;
+        this.menuController = menuController;
+        this.level = level;
         shift = false;
+        doorIsOpen = false;
+        pGes = 0;
 
 
         this.levelView.getStage().addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
@@ -91,8 +104,70 @@ public class Controller implements Observer {
 
         levelModel.addObserver(this);
         levelModel.addObserver(levelView);
+        //Todo Nötige Observer
         levelView.getStage().show();
     }
 
-    public void update(Observable o, Object arg){}
+    // Mathoden für Update
+
+    public void openDoor() {
+        if (levelModel.getGemcounter() == level.getMinGems()) {
+            doorIsOpen = true;
+        }
+    }
+    //todo Allgemeine reset methode ??
+    public void resetDoor(){
+            doorIsOpen = false;
+    }
+
+    // Führt Bewertung durch und Speichert ergebnis in Daten
+    public void score() {
+        int p1 = 1;
+        int p2 = 0;
+
+        if (levelModel.getGemcounter() > level.getMidGems() && levelModel.getGemcounter() < level.getMaxGems()) {
+            p1 = 2;
+        }
+
+        if (levelModel.getGemcounter() > level.getMaxGems()) {
+            p1 = 3;
+        }
+
+        if (level.getMaxTime() >= levelModel.getTick()) {
+            p2 = 3;
+        } else {
+            if (level.getMidTime() >= levelModel.getTick()) {
+                p2 = 2;
+            } else {
+                if (level.getMinTime() >= levelModel.getTick()) {
+                    p2 = 1;
+                } else {
+                    p2 = 0;
+                }
+            }
+        }
+
+        if(p1> p2) {
+            pGes = p2;
+        }
+        else {
+            pGes = p1;
+        }
+
+        safeScore();
+    }
+    //TODO ANPASSEN
+    // Speichert Punkte in Daten ab
+    public void safeScore (){
+
+        level.setLevelScore(pGes);
+        menuController.addScore(pGes);
+
+    }
+
+    public void update(Observable o, Object arg){
+
+    }
+
+    public boolean isDoorIsOpen() { return doorIsOpen;}
 }

@@ -13,6 +13,8 @@ import static Model.Pfeil.*;
 
 public class Spielerbewegung implements Observer {
     private Feld[][] map;
+    private LevelModel levelModel;
+    //private int gemcounter;
     private int gemcounter;
     private int o;
     private int w;
@@ -26,9 +28,10 @@ public class Spielerbewegung implements Observer {
 
     public Spielerbewegung (Feld[][] map, int gemcounter){
         this.map=map;
-        this.gemcounter=gemcounter;
+        this.levelModel = levelModel;
     }
 
+    // public int getGemcounter() {return gemcounter;} // Wird nicht mehr gebracuht
     private void setDirections (int x, int y) {
         o = x+1;
         w = x-1;
@@ -61,9 +64,7 @@ public class Spielerbewegung implements Observer {
         }
     }
 
-    public int getGemcounter() {
-        return gemcounter;
-    }
+    //public int getGemcounter() { return gemcounter; } Wird nimmer benötigt
 
     //Methode um später zu checken, ob die Felder innerhalb der Grenzen sind
     //private boolean inBound (int richtung){
@@ -119,7 +120,7 @@ public class Spielerbewegung implements Observer {
             if (checkRowOfTwoToken(x, y, richtung, ME, MUD) || checkRowOfTwoToken(x,y,richtung,ME,GEM)) {
                 setResult(x,y,richtung,PATH);
                 if (checkRowOfTwoToken(x,y,richtung,ME,GEM)) {
-                    gemcounter++;
+                    levelModel.countUp(); // ersetzt gemcount++
                     System.out.println("gem gefunden!!!!!!!!!!!!!!!!!!!!!!!");
                 }
             }
@@ -129,7 +130,7 @@ public class Spielerbewegung implements Observer {
                 setResult(x, y, richtung, ME);
                 resetOrigin(x, y);
                 if (checkRowOfTwoToken(x, y, richtung, ME, GEM)) {
-                    gemcounter++;
+                    levelModel.countUp(); // ersetzt gemcount++
                     System.out.println("gem gefunden!!!!!!!!!!!!!!!!!!!!!!!");
                 }
             }
