@@ -23,7 +23,10 @@ import java.util.Observer;
 
 //TODO: eine Klasse nur für die Levelübersicht
 
+
+
 public class LevelView implements Observer {
+    private static final int TILE_SIZE = 50;
     private LevelModel levelModel;
     private Stage stage;;
     double wScene;
@@ -61,11 +64,11 @@ public class LevelView implements Observer {
                          "-fx-border-style: double;" +
                          "-fx-border-width: 8;");
         //TODO: Eine Scene für ein Level, eine Scene für die Levelübersicht
-        levelPane.setMaxWidth(wLevelPane);
-        levelPane.setMinWidth(wLevelPane);
-        levelPane.setMaxHeight(hLevelPane);
-        levelPane.setMinHeight(hLevelPane);
-        window = new StackPane(levelPane);
+        levelPane.setMaxWidth(TILE_SIZE*levelModel.getWidth());
+        levelPane.setMinWidth(TILE_SIZE*levelModel.getWidth());
+        levelPane.setMaxHeight(TILE_SIZE*levelModel.getHeight());
+        levelPane.setMinHeight(TILE_SIZE*levelModel.getHeight());
+        window = new AnchorPane(levelPane);
         Pane ui = new Pane();
         //ui.setPrefSize(wLevelPane, hLevelPane);
         Text gemCount = new Text(30, 30, String.valueOf(counter));
@@ -73,14 +76,13 @@ public class LevelView implements Observer {
         ui.getChildren().add(gemCount);
         ui.setStyle("-fx-border-color: black");
         window.getChildren().add(ui);
-        minimap.setMaxWidth(wLevelPane+16);
-        minimap.setMinWidth(wLevelPane+16);
-        minimap.setMaxHeight(minimap.getBoundsInLocal().getHeight()*levelModel.getHeight()+16);
-        minimap.setMinHeight(minimap.getBoundsInLocal().getHeight()*levelModel.getHeight()+16);
+        minimap.setMaxWidth(TILE_SIZE*levelModel.getWidth()+16);
+        minimap.setMinWidth(TILE_SIZE*levelModel.getWidth()+16);
+        minimap.setMaxHeight(TILE_SIZE*levelModel.getHeight()+16);
+        minimap.setMinHeight(TILE_SIZE*levelModel.getHeight()+16);
         minimap.setOpacity(0.75);
-        System.out.println("blub: " + minimap.getBoundsInParent().getWidth()*levelModel.getWidth());
-        minimap.setTranslateX(minimap.getBoundsInParent().getWidth()*levelModel.getWidth()*2);
-        minimap.setTranslateY(-minimap.getBoundsInParent().getWidth()*levelModel.getWidth()-6);
+        /*minimap.setTranslateX(minimap.getBoundsInLocal().getWidth()*levelModel.getWidth()*2);
+        minimap.setTranslateY(-minimap.getBoundsInLocal().getHeight()*levelModel.getHeight());*/
         window.getChildren().add(minimap);
         window.setBackground(Background.EMPTY);
         levelScene = new Scene(window,wLevelPane, hLevelPane);
@@ -109,8 +111,8 @@ public class LevelView implements Observer {
                 ImageView tokenImageView = new ImageView();
                 Image image = levelModel.getMap()[j][i].getToken().getImg();
                 tokenImageView.setImage(image);
-                tokenImageView.setFitWidth(wLevelPane/levelModel.getWidth());
-                tokenImageView.setFitHeight(wLevelPane/levelModel.getWidth());
+                tokenImageView.setFitWidth(TILE_SIZE);
+                tokenImageView.setFitHeight(TILE_SIZE);
                 pane.getChildren().add(tokenImageView);
             }
         }
@@ -133,8 +135,8 @@ public class LevelView implements Observer {
                     //Breite Zeile * Stelle auf y + Position in Zeile x
                     ImageView token = (ImageView) pane.getChildren().get(pos);
                     token.setImage(levelModel.getMap()[x][y].getToken().getImg());
-                    token.setFitWidth(Math.round(wLevelPane/levelModel.getWidth()));
-                    token.setFitHeight(Math.round(wLevelPane/levelModel.getWidth()));
+                    token.setFitWidth(TILE_SIZE);
+                    token.setFitHeight(TILE_SIZE);
                     if(done) {
                         viewMap[x][y] = levelModel.getMap()[x][y].getToken();
                     }
