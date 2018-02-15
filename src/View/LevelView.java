@@ -1,22 +1,22 @@
 package View;
 
-import Model.Feld;
+
 import Model.Gegenstand;
 import Model.LevelModel;
+
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.effect.DropShadow;
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
+
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
+
 import javafx.stage.Stage;
 
-import java.util.Arrays;
+
 import java.util.Observable;
 import java.util.Observer;
 
@@ -26,12 +26,10 @@ import java.util.Observer;
 
 
 public class LevelView implements Observer {
-    private static final int TILE_SIZE = 50;
+    private static final int TILE_SIZE = 40;
     private LevelModel levelModel;
     private Stage stage;;
-    double wScene;
-    double hScene;
-    Pane pane;
+
     private Scene levelScene;
     TilePane levelPane;
     TilePane minimap;
@@ -39,56 +37,63 @@ public class LevelView implements Observer {
     int hLevelPane;
     private Gegenstand[][] viewMap;
     Pane window;
-    int counter = 0;
 
     public LevelView(LevelModel levelModel, Stage stage) {
         this.levelModel = levelModel;
         this.stage = stage;
         wLevelPane = 1280;
         hLevelPane = 720;
-        wScene = 600;
-        hScene = 500;
+        viewMap = new Gegenstand[levelModel.getWidth()][levelModel.getHeight()];
+
         levelPane = new TilePane();
-        minimap = new TilePane();
         levelPane.setPrefColumns(levelModel.getWidth());
         levelPane.setPrefRows(levelModel.getHeight());
         levelPane.setStyle("-fx-background-color: brown;");
-        viewMap = new Gegenstand[levelModel.getWidth()][levelModel.getHeight()];
-        fillPane(levelPane);
-        fillPane(minimap);
-
-        minimap.setScaleX(0.2);
-        minimap.setScaleY(0.2);
-        minimap.setStyle("-fx-background-color: brown;");
-        minimap.setStyle("-fx-border-color: black;" +
-                         "-fx-border-style: double;" +
-                         "-fx-border-width: 8;");
-        //TODO: Eine Scene für ein Level, eine Scene für die Levelübersicht
         levelPane.setMaxWidth(TILE_SIZE*levelModel.getWidth());
         levelPane.setMinWidth(TILE_SIZE*levelModel.getWidth());
         levelPane.setMaxHeight(TILE_SIZE*levelModel.getHeight());
         levelPane.setMinHeight(TILE_SIZE*levelModel.getHeight());
-        window = new AnchorPane(levelPane);
-        Pane ui = new Pane();
-        //ui.setPrefSize(wLevelPane, hLevelPane);
-        Text gemCount = new Text(30, 30, String.valueOf(counter));
-        gemCount.setFont(Font.font("Comic Sans", 30));
-        ui.getChildren().add(gemCount);
-        ui.setStyle("-fx-border-color: black");
-        window.getChildren().add(ui);
+        fillPane(levelPane);
+
+        minimap = new TilePane();
+        minimap.setScaleX(0.2);
+        minimap.setScaleY(0.2);
+        minimap.setStyle("-fx-background-color: brown;");
+        minimap.setStyle("-fx-border-color: black;" +
+                         "-fx-border-width: 8;");
+        fillPane(minimap);
         minimap.setMaxWidth(TILE_SIZE*levelModel.getWidth()+16);
         minimap.setMinWidth(TILE_SIZE*levelModel.getWidth()+16);
         minimap.setMaxHeight(TILE_SIZE*levelModel.getHeight()+16);
         minimap.setMinHeight(TILE_SIZE*levelModel.getHeight()+16);
         minimap.setOpacity(0.75);
-        /*minimap.setTranslateX(minimap.getBoundsInLocal().getWidth()*levelModel.getWidth()*2);
-        minimap.setTranslateY(-minimap.getBoundsInLocal().getHeight()*levelModel.getHeight());*/
-        window.getChildren().add(minimap);
-        window.setBackground(Background.EMPTY);
+        minimap.setTranslateX(wLevelPane*0.2*2-16);
+        minimap.setTranslateY(-hLevelPane*0.2*2+10);
+
+        Text gemCount = new Text(30, 30, String.valueOf(levelModel.getGemcounter()));
+        gemCount.setFont(Font.font("Verdana", 30));
+        Pane ui = new StackPane();
+        StackPane.setAlignment(gemCount, Pos.TOP_LEFT);
+        StackPane.setAlignment(minimap, Pos.CENTER);
+        ui.setPrefSize(wLevelPane, hLevelPane);
+        ui.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        ui.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        ui.getChildren().add(minimap);
+        ui.getChildren().add(gemCount);
+        ui.setStyle("-fx-border-color: red;" +
+                "-fx-border-width: 8;");
+        window = new StackPane();
+        window.setMaxSize(wLevelPane, hLevelPane);
+        window.setMinSize(wLevelPane, hLevelPane);
+        window.getChildren().addAll(levelPane, ui);
+        window.setStyle("-fx-background-color: black;");
+
+
         levelScene = new Scene(window,wLevelPane, hLevelPane);
         stage.setTitle("Boulder Dash");
         stage.setScene(levelScene);
         stage.show();
+        stage.setResizable(false);
 
 
     }
@@ -123,7 +128,6 @@ public class LevelView implements Observer {
     //View angepasst mit neuem Token
     public void updateToken(Pane pane, boolean done)
     {
-        counter++;
         for (int i=0; i<levelModel.getHeight(); i++) {
             for (int j = 0; j < levelModel.getWidth(); j++) {
                 int x = j;
@@ -143,10 +147,10 @@ public class LevelView implements Observer {
                 }
             }
         }
-        Pane ui = (Pane) window.getChildren().get(1);
-        Text gemCount = (Text)ui.getChildren().get(0);
-        gemCount.setText(String.valueOf(counter));
-        System.out.println("Gems: " + counter);
+        Pane ui = (Pane)window.getChildren().get(1);
+        Text gemCount = (Text)ui.getChildren().get(1);
+        gemCount.setText(String.valueOf(levelModel.getGemcounter()));
+        System.out.println("Gems: " + levelModel.getGemcounter());
     }
 
 
