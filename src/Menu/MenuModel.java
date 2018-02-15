@@ -10,6 +10,8 @@ public class MenuModel extends Observable {
 
 //level infos muss hier hin
     public int numberOfLevels = 12;
+    private int punkte = 0;
+
 
     public ArrayList<Level> levelList = new ArrayList<>();
     Level l1 = new Level("Bewegung", 3, true);
@@ -28,4 +30,8 @@ public class MenuModel extends Observable {
         this.levelList.add(l6);
 
     }
-}
+    public  void addScore (int i){
+        punkte = punkte + i;
+    }
+
+    public int getPunkte() { return punkte; }}

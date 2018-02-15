@@ -96,6 +96,11 @@ public class LevelModel extends Observable {
     public double getTick() {
         return tick;
     }
+
+    public void countUp(){
+        gemcounter++;
+    }
+
 //TODO: eine Klasse nur für die Levelübersicht
 
     //TODO?: Ausgangssituation anzeigen, vor den Ticks
@@ -270,7 +275,7 @@ public class LevelModel extends Observable {
                 s=s+ map[j][i].getToken() + "|";
             }
             s+="\n";*/
-            s+="Gems " + spielerbewegung.getGemcounter();
+            s+="Gems " + gemcounter;
 
         return s;
     }
