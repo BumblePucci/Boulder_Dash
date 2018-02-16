@@ -46,7 +46,7 @@ public class LevelModel extends Observable {
         gemcounter = 0;
         tick = 1;
 
-        spielerbewegung = new Spielerbewegung(map,gemcounter);
+        spielerbewegung = new Spielerbewegung(map,gemcounter,width);
         gravitation = new Gravitation(map);
         gegnerbewegung = new Gegnerbewegung(map);
         explosion = new Explosion(map);
@@ -160,6 +160,7 @@ public class LevelModel extends Observable {
     private boolean sUp = false;
     private boolean sDown = false;
 
+    //Objekt des Enums Pfeil wird erstellt -> Zeigt gedrückte Pfeiltaste an
     private Pfeil pfeil = NO;
 
     public void setPfeil(Pfeil pfeil) {
@@ -176,39 +177,41 @@ public class LevelModel extends Observable {
         return (richtung >=0) && (richtung<height);
     }
 
+
+    //TODO: bei allen Hauptregeln nachschauen, wo Richtungen neu gesetzt werden müssen -> weniger ist mehr!
     public void update(){
         boolean slimeLocked=false;
         for (int i=0; i<height; i++){
             for (int j=0; j<width; j++) {
                 int x = j;
                 int y = i;
-                int rechts = x+1;
-                int links = x-1;
-                int oben = y-1;
-                int unten = y+1;
 
 
                 if (map[x][y].getMoved()==0) {
                     if (map[x][y].getToken().equals(Gegenstand.ME)) {
                         spielerbewegung.walk(x,y,pfeil);
+                        gravitation.strikeToGems(x,y);
                     }
 
                     else if (map[x][y].getLoose() == 1) {
-                        gravitation.gravitate(x,y);
-
+                        gravitation.fall(x,y);
+                        System.out.println("LevelModel (Gravitation): falling: "+map[x][y+1].getFalling());
                     }
 
                     else if (map[x][y].getToken().equals(Gegenstand.SWAPLING)) {
                         gegnerbewegung.swapling(x, y);
+                        gravitation.strikeToGems(x,y);
 
                     }
                     else if (map[x][y].getToken().equals(Gegenstand.XLING)) {
                         gegnerbewegung.xlingOrBlockling(x, y,Gegenstand.XLING);
+                        gravitation.strikeToGems(x,y);
                         //System.out.println(map[x][y].getDirection());
                     }
 
                     else if (map[x][y].getToken().equals(Gegenstand.BLOCKLING)) {
                         gegnerbewegung.xlingOrBlockling(x,y,Gegenstand.BLOCKLING);
+                        gravitation.strikeToStones(x,y);
                     }
 
                     else if (map[x][y].getToken().equals(Gegenstand.EXPLOSION)) {

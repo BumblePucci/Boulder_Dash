@@ -67,7 +67,7 @@ public class LevelView implements Observer {
         minimap.setMaxHeight(TILE_SIZE*levelModel.getHeight()+16);
         minimap.setMinHeight(TILE_SIZE*levelModel.getHeight()+16);
         minimap.setOpacity(0.75);
-        minimap.setTranslateX(wLevelPane*0.2*2-16);
+        minimap.setTranslateX(wLevelPane*0.2*2-16); //groesse wLevelPane * skale faktor * 2 fuer Bildmitte - Rahmen
         minimap.setTranslateY(-hLevelPane*0.2*2+10);
 
         Text gemCount = new Text(30, 30, String.valueOf(levelModel.getGemcounter()));

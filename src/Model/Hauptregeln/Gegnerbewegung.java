@@ -14,6 +14,10 @@ import static Model.Gegenstand.*;
 public class Gegnerbewegung implements Observer {
     private Feld[][] map;
 
+    private int o;
+    private int w;
+    private int n;
+    private int s;
     private int vorne;
     private int hinten;
     private int rechteHand;
@@ -25,6 +29,14 @@ public class Gegnerbewegung implements Observer {
     public Gegnerbewegung (Feld[][] map){
 
         this.map=map;
+    }
+
+    //legt allgemeine Richtungen an: Osten, Westen, Norden, Süden, ausgesehen von x,y
+    private void setRichtungen(int x, int y) {
+        o = x+1;
+        w = x-1;
+        n = y-1;
+        s = y+1;
     }
 
     //legt vom Xling aus gesehen die Positionen linkeHand, rechteHand, vorne und hinten fest
@@ -53,9 +65,13 @@ public class Gegnerbewegung implements Observer {
             vorne=y+1;
             hinten=y-1;
         }
+
+        //hori1 und hori2 haben je nach Gegner eine unterschiedliche funktion
+        //Rechte-Hand-Regel
         if (map[x][y].getToken().equals(XLING)){
             hori1=rechteHand;
             hori2=linkeHand;
+        //Linke-Hand-Regel
         } else if (map[x][y].getToken().equals(BLOCKLING)) {
             hori1=linkeHand;
             hori2=rechteHand;
@@ -166,25 +182,25 @@ public class Gegnerbewegung implements Observer {
         //wenn die alte Direction OSTEN oder WESTEN ist
         if (map[x][y].getDirection().equals(OSTEN) || map[x][y].getDirection().equals(WESTEN)) {
             //und wenn die neue Richtung vorne oder hinten ist
-            System.out.println("richtung: "+richtung);
-            System.out.println("vorne: "+vorne);
-            System.out.println("hinten: "+hinten);
-            System.out.println("hori2: "+hori2);
+            System.out.println("Gegnerb.: richtung: "+richtung);
+            System.out.println("Gegnerb.: vorne: "+vorne);
+            System.out.println("Gegnerb.: hinten: "+hinten);
+            System.out.println("Gegnerb.: hori2: "+hori2);
             if (richtung==vorne || richtung==hinten) {
                 //setze den Gegner in die neue Richtung in x-Richtung (rechts oder links)
                 setResultWithoutLooking(richtung,y,gegner,direction,turningDegree);
-                System.out.println("vorne/hinten");
-                System.out.println("x: " +richtung);
-                System.out.println("y: " +y);
-                System.out.println("direction: " +direction);
+                System.out.println("Gegnerb.: vorne/hinten");
+                System.out.println("Gegnerb.: x: " +richtung);
+                System.out.println("Gegnerb.: y: " +y);
+                System.out.println("Gegnerb.: direction: " +direction);
 
             //oder wenn die neue Richtung rechteHand oder linkeHand ist
             } else {
                 //setze den Gegner in die neue Richtung in y-Richtung (oben oder unten)
                 setResultWithoutLooking(x,richtung,gegner,direction,turningDegree);
-                System.out.println("rechteHand/linkeHand");
-                System.out.println("x: " +x);
-                System.out.println("y: " +richtung);
+                System.out.println("Gegnerb.: rechteHand/linkeHand");
+                System.out.println("Gegnerb.: x: " +x);
+                System.out.println("Gegnerb.: y: " +richtung);
             }
 
         //wenn die alte Direction NORDEN oder SUEDEN ist
@@ -212,7 +228,7 @@ public class Gegnerbewegung implements Observer {
      */
     private void setResultWithoutLooking (int x, int y, Gegenstand gegner, Direction direction, int turningDegree) {
         //setze den Gegner auf das neue Feld und setze Moved-Value, setze die Direction in Abhängigkeit des turningDegrees
-        System.out.println("direction der neuen Richtung: "+map[x][y].getDirection());
+        System.out.println("Gegnerb.: direction der neuen Richtung: "+map[x][y].getDirection());
         //System.out.println("x: "+x+" und y: "+y);
         map[x][y].setToken(gegner);
         map[x][y].setMoved(1);
@@ -225,7 +241,7 @@ public class Gegnerbewegung implements Observer {
         } else if (turningDegree==3){
             setDirection3InUhr(x,y,direction);
         }
-        System.out.println("direction der neuen Richtung: "+map[x][y].getDirection());
+        System.out.println("Gegnerb.: direction der neuen Richtung: "+map[x][y].getDirection());
     }
 
 
@@ -264,7 +280,7 @@ public class Gegnerbewegung implements Observer {
 
     //Direction verändet sich um drei Richtungen im Uhrzeigersinn
     private void setDirection3InUhr (int x, int y, Direction direction) {
-        System.out.println(map[x][y].getDirection());
+        System.out.println("Gegnerb.: vor 3 Drehungen in Uhr: "+map[x][y].getDirection());
         if (direction.equals(OSTEN)){
             map[x][y].setDirection(NORDEN);
         } else if (direction.equals(NORDEN)) {
@@ -274,9 +290,9 @@ public class Gegnerbewegung implements Observer {
         } else if (direction.equals(SUEDEN)) {
             map[x][y].setDirection(OSTEN);
         }
-        System.out.println(map[x][y].getDirection());
-        System.out.println("x:" +x);
-        System.out.println("y:" +y);
+        System.out.println("Gegnerb.: nach 3 Drehungen in Uhr: "+map[x][y].getDirection());
+        System.out.println("Gegnerb.: nach 3 Drehungen in Uhr: x: " +x);
+        System.out.println("Gegnerb.: nach 3 Drehungen in Uhr: y: " +y);
     }
 
 
@@ -320,42 +336,39 @@ public class Gegnerbewegung implements Observer {
     }
 
     private void bumpWithoutLooking (int x, int y, Gegenstand gegner){
-        int rechts = x+1;
-        int links = x-1;
-        int oben = y-1;
-        int unten = y+1;
+        setRichtungen(x,y);
 
         //ist der Gegner ein Xling oder SWAPLING, so verwandle alle acht Felder um das ME herum und auch das ME in GEMs
         if (gegner.equals(XLING) || gegner.equals(SWAPLING)){
-            transformToGem(links,oben);
-            transformToGem(links,y);
-            transformToGem(links,unten);
+            transformToGem(w,n);
+            transformToGem(w,y);
+            transformToGem(w,s);
 
-            transformToGem(x,oben);
+            transformToGem(x,n);
             transformToGem(x,y);
-            transformToGem(x,unten);
+            transformToGem(x,s);
 
-            transformToGem(rechts,oben);
-            transformToGem(rechts,y);
-            transformToGem(rechts,unten);
+            transformToGem(o,n);
+            transformToGem(o,y);
+            transformToGem(o,s);
 
         //ist der Gegner ein BLOCKLING, so verwndle alle acht Felder um das ME herum und auch das ME in STONEs
         } else if (gegner.equals(BLOCKLING)) {
-            transformToStone(links,oben);
-            transformToStone(links,y);
-            transformToStone(links,unten);
+            transformToStone(w,n);
+            transformToStone(w,y);
+            transformToStone(w,s);
 
-            transformToStone(x,oben);
+            transformToStone(x,n);
             transformToStone(x,y);
-            transformToStone(x,unten);
+            transformToStone(x,s);
 
-            transformToStone(rechts,oben);
-            transformToStone(rechts,y);
-            transformToStone(rechts,unten);
+            transformToStone(o,n);
+            transformToStone(o,y);
+            transformToStone(o,s);
         }
     }
 
-    //was passiert, wenn ME auf einen Gegner stößt
+    //was passiert, wenn ME auf einen XLING oder einen SWAPLING stößt
     private void transformToGem (int x, int y){
         //ist auf dem Feld keine WALL und auch kein EXIT, so setze darauf ein GEM, setze den moved-value und setze den direction-value auf 0
         if (checkWallExit(x,y)) {
@@ -365,6 +378,7 @@ public class Gegnerbewegung implements Observer {
         }
     }
 
+    //was passiert, wenn ME auf einen BLOCKLING stößt
     private void transformToStone (int x, int y) {
         //ist auf dem Feld keine WALL und auch kein EXIT, so setze darauf ein STONE, setze den moved-value und setze den direction-value auf 0
         if (checkWallExit(x,y)) {
@@ -374,16 +388,18 @@ public class Gegnerbewegung implements Observer {
         }
     }
 
-    //Damit eine Verwandlung beim aufeinandertreffen eines Gegners, mit einem Spieler nicht eine WALL oder ein EXIT verwandelt
+    //Damit eine Verwandlung beim Aufeinandertreffen eines Gegners, mit einem Spieler nicht eine WALL oder ein EXIT verwandelt
     //Checke, ob auf einem Feld eine WALL oder ein EXIT liegt
     private boolean checkWallExit (int x, int y){
         return (!(map[x][y].getToken().equals(WALL) || map[x][y].getToken().equals(EXIT)));
     }
 
 
+    //Methode wird in LevelModel aufgerufen, wenn ein Gegenstand ein SWAPLING ist
     public void swapling (int x, int y) {
         setEnvironement(x,y);
         currentDirection=map[x][y].getDirection();
+        System.out.println("Gegnerb.: Direction des SWAPLING: "+currentDirection);
         //ist vorne ein PATH
         if (checkRowOfTwoToken(x, y, vorne, SWAPLING, PATH)) {
             //setze SWAPLING nach vorne, Richtung bleibt gleich, altes Feld wird zurück gesetzt
@@ -404,6 +420,7 @@ public class Gegnerbewegung implements Observer {
     }
 
 
+    //Methode wird in LevelModel aufgerufen, wenn ein Gegenstand ein XLING oder ein BLOCKLING ist
     public void xlingOrBlockling (int x, int y, Gegenstand gegner) {
         currentDirection=map[x][y].getDirection();
         setEnvironement(x,y);

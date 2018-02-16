@@ -10,159 +10,145 @@ import static Model.Gegenstand.*;
 
 public class Gravitation implements Observer {
     private Feld[][] map;
+    private int o;  //östliches Feld von x,y aus gesehen
+    private int w;  //westliches Feld von x,y aus gesehen
+    private int n;  //nördliches Feld von x,y aus gesehen
+    private int s;  //südliches Feld von x,y aus gesehen
 
 
     public Gravitation (Feld[][] map){
         this.map=map;
     }
 
-    private boolean checkRowOfTwoLoose (int x, int y) {
-        int unten = y+1;
-        return (map[x][unten].getMoved()==0 &&
-
-                map[x][y].getLoose() == 1 && map[x][unten].getToken().equals(PATH));
+    //Initialisierung von o,w,n,s in Abhängigkeit von x und y
+    private void setRichtungen(int x, int y) {
+        o = x+1;
+        w = x-1;
+        n = y-1;
+        s = y+1;
     }
 
-    private boolean checkConstellationFallRight (int x, int y) {
-        int rechts = x+1;
-        int oben = y-1;
-        return (map[rechts][y].getMoved()==0 && map[rechts][oben].getMoved()==0 && map[x][oben].getMoved()==0 &&
-
-                map[x][oben].getLoose()==1 && map[x][y].getSlippery()==1 &&
-                map[rechts][oben].getToken().equals(PATH) && map[rechts][y].getToken().equals(PATH));
+    //prüfen, ob der südliche Gegenstand eines Feldes dem eingesetzten Gegenstand entspricht und unbewegt ist
+    private boolean checkRowOfTwoSouth(int x, Gegenstand target) {
+        return (map[x][s].getMoved()==0 && map[x][s].getToken().equals(target));
     }
 
-    private boolean checkConstellationFallLeft (int x, int y) {
-        int links = x-1;
-        int oben = y-1;
-        return (map[links][y].getMoved()==0 && map[links][oben].getMoved()==0 && map[x][oben].getMoved()==0 &&
-
-                map[x][oben].getLoose()==1 && map[x][y].getSlippery()==1 &&
-                map[links][oben].getToken().equals(PATH) && map[links][y].getToken().equals(PATH));
+    //prüfen, ob der südliche Gegenstand eines Feldes rutschig ist
+    private boolean checkRowOfTwoSouthSlippery(int x) {
+        return (map[x][s].getMoved()==0 && map[x][s].getSlippery()==1);
     }
 
-    private boolean checkIfStrikes (int x, int y, Gegenstand pos) {
-        int oben = y-1;
-        return (map[x][oben].getMoved()==0 &&
+    //prüfen, ob rechts neben einem Feld, sowie auch rechts unterhalb des Felds ein PATH liegt, beide unbewegt
+    private boolean checkConstellationFallRight (int y) {
+        return (map[o][y].getMoved()==0 && map[o][s].getMoved()==0 &&
 
-                map[x][oben].getFalling()==1 && map[x][y].getToken().equals(pos));
+                map[o][y].getToken().equals(PATH) && map[o][s].getToken().equals(PATH));
     }
 
+    //prüfen, ob links neben einem Feld, sowie auch links unterhalb des Felds ein PATH liegt, beide unbewegt
+    private boolean checkConstellationFallLeft (int y) {
+        return (map[w][y].getMoved()==0 && map[w][s].getMoved()==0 &&
+
+                map[w][y].getToken().equals(PATH) && map[w][s].getToken().equals(PATH));
+    }
+
+    //Methode, um einen 3x3-Bereich um ein Feld zu verwandeln
+    private void transformNine (int x, int y, Gegenstand type) {
+        transformOne(w,n,type);
+        transformOne(w,y,type);
+        transformOne(w,s,type);
+
+        transformOne(x,n,type);
+        transformOne(x,y,type);
+        transformOne(x,s,type);
+
+        transformOne(o,n,type);
+        transformOne(o,y,type);
+        transformOne(o,s,type);
+    }
+
+    //verwandelt ein Feld, solange es keine WALL und kein EXIT ist
+    private void transformOne(int x, int y, Gegenstand type) {
+        if (checkWallExit(x,y)) {
+            map[x][y].setToken(type);
+            map[x][y].setMoved(1);
+        }
+    }
+
+    //Prüft, ob ein Feld eine WALL oder ein EXIT ist
     private boolean checkWallExit (int x, int y){
         return (!(map[x][y].getToken().equals(WALL) || map[x][y].getToken().equals(EXIT)));
     }
 
-    public void gravitate (int x, int y){
-        fall(x,y);
-        fallAskew(x,y);
-        strike(x,y);
+
+    //setzt auf ein Feld mit den Koordinaten xRichtung/yRichtung einen neuen Gegenstand, sowie den moved- und den falling-value
+    private void setResult (int x, int y, int xRichtung, int yRichtung) {
+        map[xRichtung][yRichtung].setToken(map[x][y].getToken());
+        map[xRichtung][yRichtung].setMoved(1);
+        map[xRichtung][yRichtung].setFalling(1);
     }
 
-    private void fall (int x, int y){
-        int unten = y+1;
-        if(checkRowOfTwoLoose(x,y)){
-            map[x][unten].setToken(map[x][y].getToken());
-            map[x][unten].setMoved(1);
-            map[x][unten].setFalling(1);
-            map[x][y].setToken(PATH);
-            map[x][y].setMoved(1);
+    //setzt auf das alte Feld ein PATH und den moved-value
+    private void resetOrigin (int x, int y) {
+        map[x][y].setToken(PATH);
+        map[x][y].setMoved(1);
+    }
+
+
+
+    //Methode, die in LevelModel für alle Felder mit gesetztem loose-value ausgeführt wird
+    public void fall (int x, int y) {
+        setRichtungen(x,y);
+        //befindet sich unterhalb des Feldes ein PATH...
+        if (checkRowOfTwoSouth(x,PATH)) {
+            //...so wird auf das neue Feld der Gegenstand des alten Felds gesetzt und das alte Feld resettet
+            setResult(x,y,x,s);
+            System.out.println("Gravitation: falling: "+map[x][s].getFalling());
+            resetOrigin(x,y);
+
+        //befindet sich unterhalb des Felds ein slippery Gegenstand...
+        } else if (checkRowOfTwoSouthSlippery(x)) {
+            //...so fällt der Gegenstand auf das süd-östliche Feld herunter, wenn es kann...
+            if (checkConstellationFallRight(y)) {
+                setResult(x,y,o,s);
+                resetOrigin(x,y);
+
+            //...wenn nicht, so fällt es auf das süd-westliche Feld herunter, wenn es kann
+            } else if (checkConstellationFallLeft(y)) {
+                setResult(x,y,w,s);
+                resetOrigin(x,y);
+            }
+
+
         }
     }
 
-    private void fallAskew (int x, int y){
-        int rechts = x+1;
-        int links = x-1;
-        int oben = y-1;
-        if (checkConstellationFallRight(x,y)){
-            map[rechts][y].setToken(map[x][oben].getToken());
-            map[rechts][y].setMoved(1);
-            map[rechts][y].setFalling(1);
-            map[x][oben].setToken(PATH);
-            map[x][oben].setMoved(1);
-        }
-        else if (checkConstellationFallLeft(x,y)){
-            map[links][y].setToken(map[x][oben].getToken());
-            map[links][y].setMoved(1);
-            map[links][y].setFalling(1);
-            map[x][oben].setToken(PATH);
-            map[x][oben].setMoved(1);
+
+    //STRIKE-METHODEN
+    //diese Methoden sind aus der Perspektive eines MEs, oder eines Gegners, die erschlagen werden
+
+    //checkt, ob das nördliche Feld loose und falling aber nicht moved ist
+    private boolean checkRowOfTwoNorthLooseFalling(int x) {
+        return (map[x][n].getMoved()==0 && map[x][n].getLoose()==1  && map[x][n].getFalling()==1);
+    }
+
+
+    //diese Methode wird im LevelModel für MEs, XLINGs und SWAPLINGs ausgeführt
+    public void strikeToGems (int x, int y) {
+        setRichtungen(x,y);
+        if (checkRowOfTwoNorthLooseFalling(x)) {
+            transformNine(x,y,GEM);
         }
     }
 
-    private void strike (int x, int y){
-        int rechts = x+1;
-        int links = x-1;
-        int oben = y-1;
-        int unten = y+1;
-        if (checkIfStrikes(x,y,ME) || checkIfStrikes(x,y,SWAPLING) || checkIfStrikes(x,y,XLING)){
-            map[x][y].setToken(GEM);
-            map[x][y].setMoved(1);
-            map[x][oben].setToken(GEM);
-            map[x][oben].setMoved(1);
-            if (checkWallExit(x,unten)){
-                map[x][unten].setToken(GEM);
-                map[x][unten].setMoved(1);
-            }
-            if (checkWallExit(rechts,y)){
-                map[rechts][y].setToken(GEM);
-                map[rechts][y].setMoved(1);
-            }
-            if (checkWallExit(links,y)){
-                map[links][y].setToken(GEM);
-                map[links][y].setMoved(1);
-            }
-            if (checkWallExit(rechts,oben)){
-                map[rechts][oben].setToken(GEM);
-                map[rechts][oben].setMoved(1);
-            }
-            if (checkWallExit(rechts,unten)){
-                map[rechts][unten].setToken(GEM);
-                map[rechts][unten].setMoved(1);
-            }
-            if (checkWallExit(links,oben)){
-                map[links][oben].setToken(GEM);
-                map[links][oben].setMoved(1);
-            }
-            if (checkWallExit(links,unten)){
-                map[links][unten].setToken(GEM);
-                map[links][unten].setMoved(1);
-            }
-        }
-        if (checkIfStrikes(x,y,BLOCKLING)){
-            map[x][y].setToken(EXPLOSION);
-            map[x][y].setMoved(1);
-            map[x][oben].setToken(EXPLOSION);
-            map[x][oben].setMoved(1);
-            if (checkWallExit(x,unten)){
-                map[x][unten].setToken(EXPLOSION);
-                map[x][unten].setMoved(1);
-            }
-            if (checkWallExit(rechts,y)){
-                map[rechts][y].setToken(EXPLOSION);
-                map[rechts][y].setMoved(1);
-            }
-            if (checkWallExit(links,y)){
-                map[links][y].setToken(EXPLOSION);
-                map[links][y].setMoved(1);
-            }
-            if (checkWallExit(rechts,oben)){
-                map[rechts][oben].setToken(EXPLOSION);
-                map[rechts][oben].setMoved(1);
-            }
-            if (checkWallExit(rechts,unten)){
-                map[rechts][unten].setToken(EXPLOSION);
-                map[rechts][unten].setMoved(1);
-            }
-            if (checkWallExit(links,oben)){
-                map[links][oben].setToken(EXPLOSION);
-                map[links][oben].setMoved(1);
-            }
-            if (checkWallExit(links,unten)){
-                map[links][unten].setToken(EXPLOSION);
-                map[links][unten].setMoved(1);
-            }
+    //diese Methode wird im LevelModel für BLOCKLINGs ausgeführt
+    public void strikeToStones (int x, int y) {
+        setRichtungen(x,y);
+        if (checkRowOfTwoNorthLooseFalling(x)) {
+            transformNine(x,y,STONE);
         }
     }
+
     public void update(Observable o, Object arg) {}
 
 }

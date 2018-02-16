@@ -1,6 +1,7 @@
 package Model.Hauptregeln;
 
 import Model.Feld;
+import Model.Gegenstand;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -9,96 +10,73 @@ import static Model.Gegenstand.*;
 
 public class Explosion implements Observer {
     private Feld[][] map;
+    private int o;  //östliches Feld von x,y aus gesehen
+    private int w;  //westliches Feld von x,y aus gesehen
+    private int n;  //nördliches Feld von x,y aus gesehen
+    private int s;  //südliches Feld von x,y aus gesehen
 
     public Explosion (Feld[][] map){
         this.map=map;
     }
 
+    //Initialisierung von o,w,n,s in Abhängigkeit von x und y
+    private void setRichtungen(int x, int y) {
+        o = x+1;
+        w = x-1;
+        n = y-1;
+        s = y+1;
+    }
+
+    //Prüft, ob ein Feld eine WALL oder ein EXIT ist
     private boolean checkWallExit (int x, int y){
         return (!(map[x][y].getToken().equals(WALL) || map[x][y].getToken().equals(EXIT)));
     }
 
-    public void endOrExplode (int x, int y){
-        int rechts = x+1;
-        int links = x-1;
-        int oben = y-1;
-        int unten = y+1;
-        if (map[x][y].getToken().equals(EXPLOSION) && map[x][y].getBam()==0 && map[x][y].getBamrich()==0){
-            map[x][y].setToken(PATH);
+    //Methode, um einen 3x3-Bereich um ein Feld zu verwandeln
+    private void transformNine (int x, int y, Gegenstand type) {
+        transformOne(w,n,type);
+        transformOne(w,y,type);
+        transformOne(w,s,type);
+
+        transformOne(x,n,type);
+        transformOne(x,y,type);
+        transformOne(x,s,type);
+
+        transformOne(o,n,type);
+        transformOne(o,y,type);
+        transformOne(o,s,type);
+    }
+
+    //verwandelt ein Feld, solange es keine WALL und kein EXIT ist
+    private void transformOne (int x, int y, Gegenstand type) {
+        if (checkWallExit(x,y)) {
+            map[x][y].setToken(type);
             map[x][y].setMoved(1);
         }
-        else if (map[x][y].getToken().equals(EXPLOSION) && map[x][y].getBam()==1){
-            map[x][y].setToken(EXPLOSION);
-            map[x][y].setMoved(1);
-            if (checkWallExit(x,oben)) {
-                map[x][oben].setToken(EXPLOSION);
-                map[x][oben].setMoved(1);
-            }
-            if (checkWallExit(x,unten)){
-                map[x][unten].setToken(EXPLOSION);
-                map[x][unten].setMoved(1);
-            }
-            if (checkWallExit(rechts,y)){
-                map[rechts][y].setToken(EXPLOSION);
-                map[rechts][y].setMoved(1);
-            }
-            if (checkWallExit(links,y)){
-                map[links][y].setToken(EXPLOSION);
-                map[links][y].setMoved(1);
-            }
-            if (checkWallExit(rechts,oben)){
-                map[rechts][oben].setToken(EXPLOSION);
-                map[rechts][oben].setMoved(1);
-            }
-            if (checkWallExit(rechts,unten)){
-                map[rechts][unten].setToken(EXPLOSION);
-                map[rechts][unten].setMoved(1);
-            }
-            if (checkWallExit(links,oben)){
-                map[links][oben].setToken(EXPLOSION);
-                map[links][oben].setMoved(1);
-            }
-            if (checkWallExit(links,unten)){
-                map[links][unten].setToken(EXPLOSION);
-                map[links][unten].setMoved(1);
-            }
+    }
+
+    //setzt auf das alte Feld ein PATH und den moved-value
+    private void resetOrigin (int x, int y) {
+        map[x][y].setToken(PATH);
+        map[x][y].setMoved(1);
+    }
+
+
+    //Methode wird in LevelModel für jedes EXPLOSION ausgeführt
+    public void endOrExplode (int x, int y){
+        setRichtungen(x,y);
+        //Ist auf einem Feld weder der bam-, noch der bamrich-value gesetzt, so erlischt die Explosion, Feld wird resettet
+        if (map[x][y].getBam()==0 && map[x][y].getBamrich()==0){
+            resetOrigin(x,y);
+
+        //Ist der bam-value gesetzt, so entsteht ein 3x3-Feld aus neuen EXPLOSIONs
+        } else if (map[x][y].getBam()==1){
+           transformNine(x,y,EXPLOSION);
         }
 
-        else if (map[x][y].getToken().equals(EXPLOSION) && map[x][y].getBamrich()==1){
-            map[x][y].setToken(GEM);
-            map[x][y].setMoved(1);
-            if (checkWallExit(x,oben)) {
-                map[x][oben].setToken(GEM);
-                map[x][oben].setMoved(1);
-            }
-            if (checkWallExit(x,unten)){
-                map[x][unten].setToken(GEM);
-                map[x][unten].setMoved(1);
-            }
-            if (checkWallExit(rechts,y)){
-                map[rechts][y].setToken(GEM);
-                map[rechts][y].setMoved(1);
-            }
-            if (checkWallExit(links,y)){
-                map[links][y].setToken(GEM);
-                map[links][y].setMoved(1);
-            }
-            if (checkWallExit(rechts,oben)){
-                map[rechts][oben].setToken(GEM);
-                map[rechts][oben].setMoved(1);
-            }
-            if (checkWallExit(rechts,unten)){
-                map[rechts][unten].setToken(GEM);
-                map[rechts][unten].setMoved(1);
-            }
-            if (checkWallExit(links,oben)){
-                map[links][oben].setToken(GEM);
-                map[links][oben].setMoved(1);
-            }
-            if (checkWallExit(links,unten)){
-                map[links][unten].setToken(GEM);
-                map[links][unten].setMoved(1);
-            }
+        //Ist der bamrich-value gesetzt, so entsteht ein 3x3-Feld aus GEMs
+        else if (map[x][y].getBamrich()==1){
+            transformNine(x,y,GEM);
         }
     }
 
