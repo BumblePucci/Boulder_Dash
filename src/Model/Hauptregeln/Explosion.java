@@ -65,18 +65,19 @@ public class Explosion implements Observer {
     //Methode wird in LevelModel für jedes EXPLOSION ausgeführt
     public void endOrExplode (int x, int y){
         setRichtungen(x,y);
-        //Ist auf einem Feld weder der bam-, noch der bamrich-value gesetzt, so erlischt die Explosion, Feld wird resettet
-        if (map[x][y].getBam()==0 && map[x][y].getBamrich()==0){
-            resetOrigin(x,y);
 
         //Ist der bam-value gesetzt, so entsteht ein 3x3-Feld aus neuen EXPLOSIONs
-        } else if (map[x][y].getBam()==1){
+        if (map[x][y].getBam()==1){
            transformNine(x,y,EXPLOSION);
-        }
 
         //Ist der bamrich-value gesetzt, so entsteht ein 3x3-Feld aus GEMs
-        else if (map[x][y].getBamrich()==1){
-            transformNine(x,y,GEM);
+        } else if (map[x][y].getBamrich()==1) {
+            transformNine(x, y, GEM);
+
+        //Ist auf einem Feld weder der bam-, noch der bamrich-value gesetzt, so erlischt die Explosion, Feld wird resettet
+        } else {
+            System.out.println("Explosion: auf x|y ist weder bam noch bamrich gesetzt");
+            resetOrigin(x, y);
         }
     }
 

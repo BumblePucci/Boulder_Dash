@@ -92,6 +92,7 @@ public class Controller implements Observer {
 
         KeyFrame drawframe = new KeyFrame(Duration.seconds(1/(5* levelModel.getTick())), event -> {
         //KeyFrame drawframe = new KeyFrame(Duration.seconds(1), event -> {
+            System.out.print(levelModel);
             levelModel.reset();
             levelModel.update();
             System.out.print(levelModel);

@@ -45,6 +45,7 @@ public class Slime implements Observer {
             //bei PATH / MUD...
             if (checkIfTurns(x,y,richtung,PATH) || checkIfTurns(x,y,richtung,MUD)) {
                 //...wird das Nachbarfeld zum Slime
+                System.out.println("Slime: Nachbar ist ein PATH oder ein MUD");
                 turnOneToSlime(x,y,richtung);
 
             //bei SWAPLING / XLING...

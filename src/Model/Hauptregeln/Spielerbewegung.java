@@ -55,7 +55,9 @@ public class Spielerbewegung implements Observer {
             richtung=n;
         } else if (pfeil==DOWN || pfeil==SDOWN){
             richtung=s;
-        }
+        } /*else if (pfeil==NO) {
+            richtung=x;
+        }*/
 
         if (pfeil==SRIGHT || pfeil==SLEFT || pfeil==SUP || pfeil==SDOWN) {
             shift=true;

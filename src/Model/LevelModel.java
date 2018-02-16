@@ -32,21 +32,21 @@ public class LevelModel extends Observable {
 
 
     public LevelModel(String name, int width, int height, int[] gems, int[] ticks, List<List<String>> pre,
-                      List<List<String>> post, int maxslime, Feld [][] map){
-        this.name=name;
-        this.width=width;
-        this.height=height;
-        this.gems=gems;
-        this.ticks=ticks;
-        this.pre=pre;
-        this.post=post;
-        this.maxslime=maxslime;
-        this.map=map;
+                      List<List<String>> post, int maxslime, Feld[][] map) {
+        this.name = name;
+        this.width = width;
+        this.height = height;
+        this.gems = gems;
+        this.ticks = ticks;
+        this.pre = pre;
+        this.post = post;
+        this.maxslime = maxslime;
+        this.map = map;
 
         gemcounter = 0;
         tick = 1;
 
-        spielerbewegung = new Spielerbewegung(map,gemcounter,width);
+        spielerbewegung = new Spielerbewegung(map, gemcounter, width);
         gravitation = new Gravitation(map);
         gegnerbewegung = new Gegnerbewegung(map);
         explosion = new Explosion(map);
@@ -97,7 +97,7 @@ public class LevelModel extends Observable {
         return tick;
     }
 
-    public void countUp(){
+    public void countUp() {
         gemcounter++;
     }
 
@@ -108,7 +108,7 @@ public class LevelModel extends Observable {
     //TODO: hier alle Methoden in der richtigen Reihenfolge rein schreiben, die in einem Tick ausgeführt werden auch pre / post
 
     //Setzt alle Values(Zusatzwerte) zu Beginn eines Ticks zurück
-    public void reset(){
+    public void reset() {
         right = false;
         left = false;
         up = false;
@@ -119,12 +119,12 @@ public class LevelModel extends Observable {
         sUp = false;
         sDown = false;
 
-        for (int i=0; i<height; i++) {
+        for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 int x = j;
                 int y = i;
                 map[x][y].setMoved(0);
-                map[x][y].setFalling(0);
+                //map[x][y].setFalling(0);
                 if (map[x][y].getToken().equals(Gegenstand.STONE) || map[x][y].getToken().equals(Gegenstand.GEM)) {
                     map[x][y].setLoose(1);
                 } else {
@@ -169,66 +169,54 @@ public class LevelModel extends Observable {
 
 
     //Methode um später zu checken, ob die Felder innerhalb der Grenzen sind
-    private boolean inBoundHori (int richtung){
-        return (richtung >= 0) && (richtung<width);
+    private boolean inBoundHori(int richtung) {
+        return (richtung >= 0) && (richtung < width);
     }
 
-    private boolean inBoundVerti (int richtung){
-        return (richtung >=0) && (richtung<height);
+    private boolean inBoundVerti(int richtung) {
+        return (richtung >= 0) && (richtung < height);
     }
 
 
     //TODO: bei allen Hauptregeln nachschauen, wo Richtungen neu gesetzt werden müssen -> weniger ist mehr!
-    public void update(){
-        boolean slimeLocked=false;
-        for (int i=0; i<height; i++){
-            for (int j=0; j<width; j++) {
+    public void update() {
+        boolean slimeLocked = false;
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
                 int x = j;
                 int y = i;
 
 
-                if (map[x][y].getMoved()==0) {
-                    if (map[x][y].getToken().equals(Gegenstand.ME)) {
-                        spielerbewegung.walk(x,y,pfeil);
-                        gravitation.strikeToGems(x,y);
-                    }
-
-                    else if (map[x][y].getLoose() == 1) {
-                        gravitation.fall(x,y);
-                        System.out.println("LevelModel (Gravitation): falling: "+map[x][y+1].getFalling());
-                    }
-
-                    else if (map[x][y].getToken().equals(Gegenstand.SWAPLING)) {
+                if (map[x][y].getMoved() == 0) {
+                    if (map[x][y].getLoose() == 1) {
+                        gravitation.fall(x, y);
+                        System.out.println("LevelModel (Gravitation): falling: " + map[x][y + 1].getFalling());
+                    }else if (map[x][y].getToken().equals(Gegenstand.ME)) {
+                        spielerbewegung.walk(x, y, pfeil);
+                        gravitation.strikeToGems(x, y);
+                    } else if (map[x][y].getToken().equals(Gegenstand.SWAPLING)) {
                         gegnerbewegung.swapling(x, y);
-                        gravitation.strikeToGems(x,y);
+                        gravitation.strikeToGems(x, y);
 
-                    }
-                    else if (map[x][y].getToken().equals(Gegenstand.XLING)) {
-                        gegnerbewegung.xlingOrBlockling(x, y,Gegenstand.XLING);
-                        gravitation.strikeToGems(x,y);
+                    } else if (map[x][y].getToken().equals(Gegenstand.XLING)) {
+                        gegnerbewegung.xlingOrBlockling(x, y, Gegenstand.XLING);
+                        gravitation.strikeToGems(x, y);
                         //System.out.println(map[x][y].getDirection());
-                    }
-
-                    else if (map[x][y].getToken().equals(Gegenstand.BLOCKLING)) {
-                        gegnerbewegung.xlingOrBlockling(x,y,Gegenstand.BLOCKLING);
-                        gravitation.strikeToStones(x,y);
-                    }
-
-                    else if (map[x][y].getToken().equals(Gegenstand.EXPLOSION)) {
+                    } else if (map[x][y].getToken().equals(Gegenstand.BLOCKLING)) {
+                        gegnerbewegung.xlingOrBlockling(x, y, Gegenstand.BLOCKLING);
+                        gravitation.strikeToStones(x, y);
+                    } else if (map[x][y].getToken().equals(Gegenstand.EXPLOSION)) {
                         explosion.endOrExplode(x, y);
 
 
-                    }
-
-                    else if (map[x][y].getToken().equals(Gegenstand.SLIME)) {
-                        slime.spreadSlime(x,y);
+                    } else if (map[x][y].getToken().equals(Gegenstand.SLIME)) {
+                        slime.spreadSlime(x, y);
 
                         //TODO: mit Rekursion arbeiten
-                        if (slime.checkIfTurnToGems(x,y)){
-                            slimeLocked=true;
-                        }
-                        else {
-                            slimeLocked=false;
+                        if (slime.checkIfTurnToGems(x, y)) {
+                            slimeLocked = true;
+                        } else {
+                            slimeLocked = false;
                         }
 
                     }
@@ -251,7 +239,7 @@ public class LevelModel extends Observable {
 
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                int slimeCounter=0;
+                int slimeCounter = 0;
                 int x = j;
                 int y = i;
                 if (map[x][y].getToken().equals(Gegenstand.SLIME)) {
@@ -270,16 +258,18 @@ public class LevelModel extends Observable {
 
 
     //TODO: post-Methode
-    public String toString(){
-        String s ="";
-        /*for(int i=0; i<height; i++){
-            s+="|";
-            for(int j = 0; j<width; j++){
-                s=s+ map[j][i].getToken() + "|";
+    public String toString() {
+        String s = "";
+        for (int i = 0; i < height; i++) {
+            s += "|";
+            for (int j = 0; j < width; j++) {
+                s = s + map[j][i].getToken() + "|";
             }
-            s+="\n";*/
-            s+="Gems " + gemcounter;
+            s += "\n";
+            s += "Gems " + gemcounter;
 
-        return s;
+        }
+            return s;
+
     }
 }
