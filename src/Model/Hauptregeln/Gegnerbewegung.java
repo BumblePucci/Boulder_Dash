@@ -468,6 +468,10 @@ public class Gegnerbewegung implements Observer {
             } else {
 
                 //links ist ein PATH
+                System.out.println("Gegnerb.: Gegnestand zur linkenHand: "+map[x][hori2].getToken());
+                System.out.println("Gegnerb.: südlicher Gegnestand: "+map[x][y+1].getToken());
+                System.out.println("Gegnerb.: Position zur linkenHand: "+hori2);
+                System.out.println("Gegnerb.: südliche Position: "+y);
                 if (checkRowOfTwoToken(x, y, hori2, gegner, PATH)) {
 
                     //links vorne ist ein PATH oder ein ME, gehe nach links und behalte die Richtung

@@ -119,7 +119,8 @@ public class Gravitation implements Observer {
                 resetOrigin(x,y);
             }
 
-
+        } else if (!(checkRowOfTwoSouth(x,ME) || checkRowOfTwoSouth(x,XLING) || checkRowOfTwoSouth(x,BLOCKLING) || checkRowOfTwoSouth(x,SWAPLING))) {
+            map[x][y].setFalling(0);
         }
     }
 
@@ -130,6 +131,7 @@ public class Gravitation implements Observer {
     //checkt, ob das nördliche Feld loose und falling aber nicht moved ist
     private boolean checkRowOfTwoNorthLooseFalling(int x) {
         return (map[x][n].getMoved()==0 && map[x][n].getLoose()==1  && map[x][n].getFalling()==1);
+        //return (map[x][n].getLoose()==1  && map[x][n].getFalling()==1);
     }
 
 
@@ -145,6 +147,7 @@ public class Gravitation implements Observer {
     public void strikeToStones (int x, int y) {
         setRichtungen(x,y);
         if (checkRowOfTwoNorthLooseFalling(x)) {
+            System.out.println("Gravitation: Stein erfüllt Bedingungen um zu schlagen");
             transformNine(x,y,STONE);
         }
     }
