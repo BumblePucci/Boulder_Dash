@@ -284,39 +284,39 @@ public class JSON_Verarbeitung {
                     feld.setToken(Gegenstand.XLING);
                 }
 
-                else if (zeile.equals("ghostling") || token.equals("ghostling")) {
+                else if (zeile.get(j).equals("ghostling") || token.equals("ghostling")) {
                     feld.setToken(Gegenstand.GHOSTLING);
                 }
 
-                else if (zeile.equals("fire") || token.equals("fire")) {
+                else if (zeile.get(j).equals("fire") || token.equals("fire")) {
                     feld.setToken(Gegenstand.FIRE);
                 }
 
-                else if (zeile.equals("norththing") || token.equals("norththing")) {
+                else if (zeile.get(j).equals("norththing") || token.equals("norththing")) {
                     feld.setToken(Gegenstand.NORTHTHING);
                 }
 
-                else if (zeile.equals("eastthing") || token.equals("eastthing")) {
+                else if (zeile.get(j).equals("eastthing") || token.equals("eastthing")) {
                     feld.setToken(Gegenstand.EASTTHING);
                 }
 
-                else if (zeile.equals("souththing") || token.equals("souththing")) {
+                else if (zeile.get(j).equals("souththing") || token.equals("souththing")) {
                     feld.setToken(Gegenstand.SOUTHTHING);
                 }
 
-                else if (zeile.equals("westthing") || token.equals("westthing")) {
+                else if (zeile.get(j).equals("westthing") || token.equals("westthing")) {
                     feld.setToken(Gegenstand.WESTTHING);
                 }
 
-                else if (zeile.equals("pot") || token.equals("pot")) {
+                else if (zeile.get(j).equals("pot") || token.equals("pot")) {
                     feld.setToken(Gegenstand.POT);
                 }
 
-                else if (zeile.equals("sieve") || token.equals("sieve")) {
+                else if (zeile.get(j).equals("sieve") || token.equals("sieve")) {
                     feld.setToken(Gegenstand.SIEVE);
                 }
 
-                else if (zeile.equals("sand") || token.equals("sand")) {
+                else if (zeile.get(j).equals("sand") || token.equals("sand")) {
                     feld.setToken(Gegenstand.SAND);
                 }
                 map[j][i] = feld;

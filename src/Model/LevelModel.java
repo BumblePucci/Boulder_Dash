@@ -109,6 +109,7 @@ public class LevelModel extends Observable {
 
     //Setzt alle Values(Zusatzwerte) zu Beginn eines Ticks zurück
     public void reset(){
+        pfeil = Pfeil.NO;
         right = false;
         left = false;
         up = false;
@@ -167,6 +168,9 @@ public class LevelModel extends Observable {
         this.pfeil = pfeil;
     }
 
+    public Pfeil getPfeil() {
+        return pfeil;
+    }
 
     //Methode um später zu checken, ob die Felder innerhalb der Grenzen sind
     private boolean inBoundHori (int richtung){
@@ -188,14 +192,14 @@ public class LevelModel extends Observable {
 
 
                 if (map[x][y].getMoved()==0) {
-                    if (map[x][y].getToken().equals(Gegenstand.ME)) {
+                    if (map[x][y].getToken().equals(Gegenstand.ME) && pfeil != Pfeil.NO) {
                         spielerbewegung.walk(x,y,pfeil);
                         gravitation.strikeToGems(x,y);
                     }
 
                     else if (map[x][y].getLoose() == 1) {
                         gravitation.fall(x,y);
-                        System.out.println("LevelModel (Gravitation): falling: "+map[x][y+1].getFalling());
+                        /*System.out.println("LevelModel (Gravitation): falling: "+map[x][y+1].getFalling());*/
                     }
 
                     else if (map[x][y].getToken().equals(Gegenstand.SWAPLING)) {
@@ -232,7 +236,6 @@ public class LevelModel extends Observable {
                         }
 
                     }
-
                 }
             }
         }
@@ -263,7 +266,6 @@ public class LevelModel extends Observable {
                 }
             }
         }
-
         setChanged();
         notifyObservers();
     }
@@ -278,7 +280,7 @@ public class LevelModel extends Observable {
                 s=s+ map[j][i].getToken() + "|";
             }
             s+="\n";*/
-            s+="Gems " + gemcounter;
+            /*s+="Gems " + gemcounter;*/
 
         return s;
     }

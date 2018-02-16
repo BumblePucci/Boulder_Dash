@@ -25,6 +25,7 @@ public class Spielerbewegung implements Observer {
     private int oo;             //zwei Felder weiter östlich von x,y aus gesehen
     private int ww;             //zwei Felder weiter westlich von x,y aus gesehen
     private int zweiWeiter;     //ein Wert, der zwei Felder weiter von x,y aus gesehen liegt
+    private Pfeil pfeil;
 
     public Spielerbewegung (Feld[][] map, int gemcounter, int width){
         this.map=map;
@@ -46,6 +47,7 @@ public class Spielerbewegung implements Observer {
 
     //je nach gedrückter Pfeilrichtung, wird die richtung (o,w,n oder s) übergeben (ein S vor der Pfeilrichtung steht für gedrückte shift-taste)
     private void setEnvironement (int x, int y, Pfeil pfeil) {
+        this.pfeil = pfeil;
         setRichtungen(x,y);
         if (pfeil==RIGHT || pfeil==SRIGHT){
             richtung=o;
@@ -83,7 +85,8 @@ public class Spielerbewegung implements Observer {
     private boolean checkRowOfTwoToken (int x, int y, int richtung, Gegenstand pos, Gegenstand nachbar) {
 
         //ist die Richtung OSTEN oder WESTEN
-        if (richtung == o || richtung == w) {
+        if ((richtung == o || richtung == w) && (pfeil == RIGHT || pfeil == SRIGHT || pfeil == LEFT || pfeil == SLEFT)) {
+            System.out.println("links und rechts");
             return (map[richtung][y].getMoved()==0 && map[richtung][y].getFalling()==0 &&
 
                     map[x][y].getToken().equals(pos) && map[richtung][y].getToken().equals(nachbar));
@@ -113,12 +116,16 @@ public class Spielerbewegung implements Observer {
 
     //Setzt je nach richtung einen neuen Gegenstand ein Feld weiter in x- oder y-Richtung (moved-value wird auch dort gesetzt)
     private void setResult (int x, int y, int richtung, Gegenstand gegenstand) {
-        if (richtung==w || richtung==o) {
+        if ((richtung==w || richtung==o) && (pfeil == RIGHT || pfeil == SRIGHT || pfeil == LEFT || pfeil == SLEFT)) {
             map[richtung][y].setToken(gegenstand);
             map[richtung][y].setMoved(1);
+            System.out.println("y = " + y);
+            System.out.println("richtung = " + richtung);
         } else {
             map[x][richtung].setToken(gegenstand);
             map[x][richtung].setMoved(1);
+            System.out.println("x = " + x);
+            System.out.println("richtung = " + richtung);
         }
     }
 
@@ -137,6 +144,7 @@ public class Spielerbewegung implements Observer {
         if (shift) {
             //...und das Nachbarfeld ein MUD oder ein GEM...
             if (checkRowOfTwoToken(x, y, richtung, ME, MUD) || checkRowOfTwoToken(x,y,richtung,ME,GEM)) {
+
                 //...so wird das Nachbarfeld zum PATH...
                 setResult(x,y,richtung,PATH);
                 //...und falls es ein GEM ist, wird zusätzlich der gemcounter erhöht
@@ -152,6 +160,8 @@ public class Spielerbewegung implements Observer {
             //...und der Nachbar ein PATH, MUD oder GEM...
             if (checkRowOfTwoToken(x, y, richtung, ME, PATH) || checkRowOfTwoToken(x, y, richtung, ME, MUD) ||
                     checkRowOfTwoToken(x, y, richtung, ME, GEM)) {
+                System.out.println("Spielerbewegung: Richtung move: " + richtung);
+                System.out.println("Spielerbewegung: Pfeil1: " + pfeil);
                 //...so setzte auf das Nachbarfeld ein ME und resette das Ausgangsfeld...
                 setResult(x, y, richtung, ME);
                 resetOrigin(x, y);
@@ -164,8 +174,9 @@ public class Spielerbewegung implements Observer {
             }
 
             //...und die richtung horizontal...
-            if (richtung==w || richtung==o) {
-                System.out.println("Spielerbewegung: Richtung: "+richtung);
+            if ((richtung==w || richtung==o)){
+                //System.out.println("Spielerbewegung: Richtung: "+richtung);
+
                 //...und die Felder zweiWeiter noch innerhalb des Arrays...
                 if (inBoundHoriZweiWeiter(richtung)) {
                     //...und das Nachbarfeld pushable und dahinter ein PATH...
@@ -181,6 +192,7 @@ public class Spielerbewegung implements Observer {
                     }
                 }
             }
+            System.out.println("------------------------------------------------");
         }
     }
 

@@ -79,9 +79,6 @@ public class Controller implements Observer {
 
         });
 
-        this.levelView.getStage().addEventHandler(KeyEvent.KEY_TYPED, ev -> {
-
-        });
 
         this.levelView.getStage().addEventHandler(KeyEvent.KEY_RELEASED, ev -> {
             if (ev.getCode()==KeyCode.SHIFT) {
@@ -92,8 +89,8 @@ public class Controller implements Observer {
 
         KeyFrame drawframe = new KeyFrame(Duration.seconds(1/(5* levelModel.getTick())), event -> {
         //KeyFrame drawframe = new KeyFrame(Duration.seconds(1), event -> {
-            levelModel.reset();
             levelModel.update();
+            levelModel.reset();
             System.out.print(levelModel);
             System.out.println("-");
 
