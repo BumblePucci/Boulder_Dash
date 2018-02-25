@@ -92,6 +92,7 @@ public class Gravitation implements Observer {
     private void resetOrigin (int x, int y) {
         map[x][y].setToken(PATH);
         map[x][y].setMoved(1);
+        map[x][y].setFalling(0);
     }
 
 

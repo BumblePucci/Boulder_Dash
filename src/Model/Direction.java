@@ -12,4 +12,19 @@ public enum Direction {
     public int getNumber() {
         return number;
     }
+
+    public Direction rotateClockwise() {
+        switch (this) {
+            case OSTEN:
+                return SUEDEN;
+            case NORDEN:
+                return OSTEN;
+            case SUEDEN:
+                return WESTEN;
+            case WESTEN:
+                return NORDEN;
+            default:
+                return NO;
+        }
+    }
 }

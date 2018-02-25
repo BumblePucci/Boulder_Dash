@@ -11,6 +11,13 @@ import static Model.Gegenstand.*;
 public class Slime implements Observer {
 
     private Feld[][] map;
+
+    private int currentPosX;
+    private int currentPosY;
+
+    private int dirX;
+    private int dirY;
+
     private int o;  //östliches Feld von x,y aus gesehen
     private int w;  //westliches Feld von x,y aus gesehen
     private int n;  //nördliches Feld von x,y aus gesehen
@@ -19,70 +26,74 @@ public class Slime implements Observer {
     public Slime (Feld[][] map){
 
         this.map=map;
+
+        o = 1;
+        w = -1;
+        n = -1;
+        s = 1;
     }
 
-    //Initialisierung von o,w,n,s in Abhängigkeit von x und y
-    private void setRichtungen(int x, int y) {
-        o = x+1;
-        w = x-1;
-        n = y-1;
-        s = y+1;
-    }
+    private void setEnvironement (int x, int y, int dir) {
+        currentPosX = x;
+        currentPosY = y;
 
+        dirX = 0;
+        dirY = 0;
 
-    //checkt in Abhängigkeit der horizontalen bzw. vertikalen Richtung, ob der eingesetzte Gegenstand unbewegt (moved-value=0) auf dem Nachbarfeld liegt
-    private boolean checkIfTurns (int x, int y, int richtung, Gegenstand nachbar) {
-        if (richtung==o || richtung==w) {
-            return (map[richtung][y].getMoved() == 0 && (map[richtung][y].getToken().equals(nachbar)));
-        } else {
-            return (map [x][richtung].getMoved() == 0 && (map[x][richtung].getToken().equals(nachbar)));
+        if (dir==o) {
+            dirX = o;
+        } else if (dir==w) {
+            dirX = w;
+        } else if (dir==n) {
+            dirY = n;
+        } else if (dir==s) {
+            dirY = s;
         }
     }
 
+    //checkt in Abhängigkeit der horizontalen bzw. vertikalen Richtung, ob der eingesetzte Gegenstand unbewegt (moved-value=0) auf dem Nachbarfeld liegt
+    private boolean checkIfTurns (int x, int y, Gegenstand nachbar) {
+        return (map[x][y].getMoved() == 0 && (map[x][y].getToken().equals(nachbar)));
+    }
+
     //Methode, die mit einer Wahrscheinlichkeit von 3% auf ein Feld, in Abhängigkeit des Gegenstandes auf dem Feld, (einen) neue(n) Gegenstand(e) setzt
-    private void spreadOne (int x, int y, int richtung) {
+    private void spreadOne (int x, int y, int dir) {
+        setEnvironement(x, y, dir);
+
+        int newX = currentPosX + dirX;
+        int newY = currentPosY + dirY;
+        System.out.println("Slime: dir: "+dir);
+        System.out.println("Slime: currentPosX: "+currentPosX);
+        System.out.println("Slime: currentPosY: "+currentPosY);
+        System.out.println("Slime: newX: "+newX);
+        System.out.println("Slime: newY: "+newY);
+
         if (Math.random() <= 0.03) {
             //bei PATH / MUD...
-            if (checkIfTurns(x,y,richtung,PATH) || checkIfTurns(x,y,richtung,MUD)) {
+            if (checkIfTurns(newX, newY, PATH) || checkIfTurns(newX, newY, MUD)) {
                 //...wird das Nachbarfeld zum Slime
                 System.out.println("Slime: Nachbar ist ein PATH oder ein MUD");
-                turnOneToSlime(x,y,richtung);
+                setResult(newX,newY,SLIME);
 
             //bei SWAPLING / XLING...
-            } else if (checkIfTurns(x,y,richtung,SWAPLING) || checkIfTurns(x,y,richtung,XLING)) {
+            } else if (checkIfTurns(newX, newY, SWAPLING) || checkIfTurns(newX, newY, XLING)) {
                 //...entstehen um das Nachbarfeld herum und auf dem Nachbarfeld lauter GEMs
-                turnNine(x,y,richtung, GEM);
+                turnNine(newX, newY, GEM);
 
             //bei BLOCKLING...
-            } else if (checkIfTurns(x,y,richtung,BLOCKLING)) {
+            } else if (checkIfTurns(newX, newY, BLOCKLING)) {
                 //...entstehen um das Nachbarfeld herum und auf dem Nachbarfeld lauter EXPLOSIONs
-                turnNine(x,y,richtung,EXPLOSION);
+                turnNine(newX, newY, EXPLOSION);
             }
         }
 
     }
 
-    //vewandelt einen Nachbarn in Abhängigkeit der Richtung in einen SLIME in entweder x- oder y-Richtung
-    private void turnOneToSlime(int x, int y, int richtung) {
-        if (richtung == o || richtung == w) {
-            setResult(richtung,y,SLIME);
-        } else {
-            setResult(x,richtung,SLIME);
-        }
-    }
 
-    //verwandelt alle Felder um den Nachbarn herum und den Nachbarn in Abhängigkeit der Richtung in entweder x- oder y-Richtung
-    //zu verwandelnder Gegenstand kann an Stelle "type" eingesetzt werden
-    private void turnNine (int x, int y, int richtung, Gegenstand type) {
-        if (richtung==o || richtung==w) {
-            turnNineWithoutLooking(richtung,y,type);
-        } else {
-            turnNineWithoutLooking(x,richtung,type);
-        }
-    }
+
 
     //verwandelt alle Felder um ein Feld herum und das Feld selbst in einen neuen Gegenstand "type"
-    private void turnNineWithoutLooking (int x, int y, Gegenstand type) {
+    private void turnNine (int x, int y, Gegenstand type) {
         int rechts = x+1;
         int links = x-1;
         int oben = y-1;
@@ -110,7 +121,6 @@ public class Slime implements Observer {
 
     //Methode, wie sich ein Slime ausbreitet
     public void spreadSlime (int x, int y){
-        setRichtungen(x,y);
         //pro tick ist es Möglich, dass sich in jede Richtung ein Slime ausbreitet oder ein Gegenstand durch den Slime daneben auf andere Weise verwandelt wird
         spreadOne(x,y,o);
         spreadOne(x,y,w);

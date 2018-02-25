@@ -65,12 +65,10 @@ public class LevelModel extends Observable {
         return height;
     }
 
-    public int[] getGems() {
-        return gems;
-    }
+    public int[] getGems() { return gems; }
 
     public int getGemcounter() {
-        return gemcounter;
+        return spielerbewegung.getGemcounter();
     }
 
     public int[] getTicks() {
@@ -109,17 +107,6 @@ public class LevelModel extends Observable {
 
     //Setzt alle Values(Zusatzwerte) zu Beginn eines Ticks zurück
     public void reset(){
-        pfeil = Pfeil.NO;
-        right = false;
-        left = false;
-        up = false;
-        down = false;
-
-        sRight = false;
-        sLeft = false;
-        sUp = false;
-        sDown = false;
-
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 int x = j;
@@ -142,24 +129,16 @@ public class LevelModel extends Observable {
                 } else {
                     map[x][y].setPushable(0);
                 }
-                map[x][y].setBam(0);
-                map[x][y].setBamrich(0);
+                //map[x][y].setBam(0);
+                //map[x][y].setBamrich(0);
             }
         }
     }
 
     //TODO: pre-Regel-Metode
+    public void pre () {}
 
     //TODO: right left up down und shift-"- hier vor der update()-Methode setzen
-    private boolean right = false;
-    private boolean left = false;
-    private boolean up = false;
-    private boolean down = false;
-
-    private boolean sRight = false;
-    private boolean sLeft = false;
-    private boolean sUp = false;
-    private boolean sDown = false;
 
     //Objekt des Enums Pfeil wird erstellt -> Zeigt gedrückte Pfeiltaste an
     private Pfeil pfeil = NO;
@@ -184,6 +163,7 @@ public class LevelModel extends Observable {
 
     //TODO: bei allen Hauptregeln nachschauen, wo Richtungen neu gesetzt werden müssen -> weniger ist mehr!
     public void update(){
+        System.out.println("Pfeilrichtung: "+pfeil);
         boolean slimeLocked=false;
         for (int i=0; i<height; i++){
             for (int j=0; j<width; j++) {
@@ -194,6 +174,7 @@ public class LevelModel extends Observable {
                         gravitation.fall(x, y);
                         System.out.println("LevelModel (Gravitation): falling: " + map[x][y + 1].getFalling());
                     }else if (map[x][y].getToken().equals(Gegenstand.ME) && pfeil != Pfeil.NO) {
+                        System.out.println("Pfeilrichtung: "+pfeil);
                         spielerbewegung.walk(x, y, pfeil);
                         gravitation.strikeToGems(x, y);
                     } else if (map[x][y].getToken().equals(Gegenstand.SWAPLING)) {
@@ -201,11 +182,12 @@ public class LevelModel extends Observable {
                         gravitation.strikeToGems(x, y);
 
                     } else if (map[x][y].getToken().equals(Gegenstand.XLING)) {
-                        gegnerbewegung.xlingOrBlockling(x, y, Gegenstand.XLING);
+                        System.out.println("Xling-Direction: "+map[x][y].getDirection());
+                        gegnerbewegung.xling(x, y);
                         gravitation.strikeToGems(x, y);
                         //System.out.println(map[x][y].getDirection());
                     } else if (map[x][y].getToken().equals(Gegenstand.BLOCKLING)) {
-                        gegnerbewegung.xlingOrBlockling(x, y, Gegenstand.BLOCKLING);
+                        gegnerbewegung.blockling(x, y);
                         gravitation.strikeToStones(x, y);
                     } else if (map[x][y].getToken().equals(Gegenstand.EXPLOSION)) {
                         explosion.endOrExplode(x, y);
@@ -215,11 +197,11 @@ public class LevelModel extends Observable {
                         slime.spreadSlime(x, y);
 
                         //TODO: mit Rekursion arbeiten
-                        if (slime.checkIfTurnToGems(x, y)) {
+                        /*if (slime.checkIfTurnToGems(x, y)) {
                             slimeLocked = true;
                         } else {
                             slimeLocked = false;
-                        }
+                        }*/
 
                     }
 
@@ -227,7 +209,7 @@ public class LevelModel extends Observable {
             }
         }
 
-        if (slimeLocked) {
+        /*if (slimeLocked) {
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
                     int x = j;
@@ -252,7 +234,7 @@ public class LevelModel extends Observable {
                     }
                 }
             }
-        }
+        }*/
 
         setChanged();
         notifyObservers();
@@ -260,6 +242,8 @@ public class LevelModel extends Observable {
 
 
     //TODO: post-Methode
+    public void post () {}
+
     public String toString() {
         String s = "";
         for (int i = 0; i < height; i++) {

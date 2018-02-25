@@ -9,11 +9,15 @@ import java.io.IOException;
 import java.util.List;
 
 public class Main extends Application {
+    public static void main(String[] args) throws IOException {
+        launch(args);
+    }
+
     @Override
     public void start(Stage stage) throws Exception {
 
         JSON_Verarbeitung jsonVerarbeitung = new JSON_Verarbeitung(); //JSON-Files erst aufrufen, wenn im Menü auf jeweiliges Level geklickt wurde
-        String path = "./src/JSONLevels/spieler-gravitation_test.json";                                      //dann auch alle anderen Paths setzen
+        String path = "./src/JSONLevels/gegner_test.json";                                      //dann auch alle anderen Paths setzen
         jsonVerarbeitung.load_json_file(path);//Path für Level 1, 2, 3,...
 
         final String name = jsonVerarbeitung.getName();
@@ -26,15 +30,10 @@ public class Main extends Application {
         final int maxslime = jsonVerarbeitung.getMaxslime();
         final Feld[][] map = jsonVerarbeitung.getMap();
 
-        LevelModel levelModel = new LevelModel(name,width,height,gems,ticks,pre,post,maxslime,map);
+        LevelModel levelModel = new LevelModel(name, width, height, gems, ticks, pre, post, maxslime, map);
         LevelView levelView = new LevelView(levelModel, stage);
         new Controller(levelModel, levelView);
-       // GameMenu gameMenu = new GameMenu();
-
-    }
-
-
-    public static void main(String[] args) throws IOException {
-        launch(args);
+        MenuMain menuMain = new MenuMain(); //Menue wird eingebunden
+        menuMain.start(stage);
     }
 }

@@ -11,6 +11,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
@@ -27,16 +28,15 @@ import java.util.Observer;
 
 public class LevelView implements Observer {
     private static final int TILE_SIZE = 40;
-    private LevelModel levelModel;
-    private Stage stage;;
-
-    private Scene levelScene;
     TilePane levelPane;
     TilePane minimap;
     int wLevelPane;
     int hLevelPane;
-    private Gegenstand[][] viewMap;
     Pane window;
+    private LevelModel levelModel;
+    private Stage stage;
+    private Scene levelScene;
+    private Gegenstand[][] viewMap;
 
     public LevelView(LevelModel levelModel, Stage stage) {
         this.levelModel = levelModel;
@@ -72,6 +72,7 @@ public class LevelView implements Observer {
 
         Text gemCount = new Text(30, 30, String.valueOf(levelModel.getGemcounter()));
         gemCount.setFont(Font.font("Verdana", 30));
+        gemCount.setFill(Color.WHITE);
         Pane ui = new StackPane();
         StackPane.setAlignment(gemCount, Pos.TOP_LEFT);
         StackPane.setAlignment(minimap, Pos.CENTER);
@@ -96,7 +97,13 @@ public class LevelView implements Observer {
         stage.setResizable(false);
 
 
+
     }
+
+    public Scene getLevelScene() {
+        return levelScene;
+    }
+
     //alle Token aus SpielfeldMap in ViewMap speichern
     //bei Änderungen kann Spielfeld auf Änderungen überprüft werden
     private void updateViewMap() {

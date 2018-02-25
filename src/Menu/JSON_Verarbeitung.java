@@ -1,3 +1,4 @@
+package Menu;
 
 import Model.Direction;
 import Model.Feld;

@@ -1,5 +1,11 @@
 package Menu;
 
+import Model.Feld;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by sakinakamilova on 04.02.18.
  */
@@ -7,6 +13,10 @@ public class Level {
     public String levelName;
     public int levelScore;
     public Boolean levelPlayed;
+
+    public int levelNummer;
+
+
     private int minGems;
     private int midGems;
     private int maxGems;
@@ -15,18 +25,26 @@ public class Level {
     private int maxTime;
 
 
-
     public Level(String levelName, int levelScore, boolean levelPlayed) {
+        //Initialisierungen
         this.levelName = levelName;
         this.levelScore = levelScore;
         this.levelPlayed = levelPlayed;
 
-        minGems = 3; // todo muss noch wirklich ausgelesene werden
-        midGems = 5; // todo muss noch wirklich ausgelesene werden
-        maxGems = 8; // todo muss noch wirklich ausgelesene werden
-        minTime = 1000; // todo muss noch wirklich ausgelesene werden
-        midTime = 500; // todo muss noch wirklich ausgelesene werden
-        maxTime = 100; // todo muss noch wirklich ausgelesene werden
+        this.levelNummer = levelNummer;
+
+
+       //todo werte die ausgelesen werden
+        minGems = 1;
+        midGems = 2;
+        maxGems = 3;
+        minTime = 1000;
+        midTime = 500;
+        maxTime = 100;
+
+
+
+        //Todo Einlesen aus main implementieren
 
     }
 
@@ -71,4 +89,8 @@ public class Level {
     public void setLevelScore(int levelScore) { this.levelScore = levelScore; }
 
     public void setLevelPlayed(Boolean levelPlayed) { this.levelPlayed = levelPlayed; }
+
+    public int getLevelNummer() { return levelNummer; }
+
+    public void setLevelNummer(int levelNummer) { this.levelNummer = levelNummer; }
 }

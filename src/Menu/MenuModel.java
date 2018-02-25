@@ -1,5 +1,7 @@
 package Menu;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Observable;
 
@@ -7,31 +9,45 @@ import java.util.Observable;
  * Created by sakinakamilova on 28.01.18.
  */
 public class MenuModel extends Observable {
+    private int punkte;
+    public ArrayList<Level> levelList;
 
-//level infos muss hier hin
-    public int numberOfLevels = 12;
-    private int punkte = 0;
-
-
-    public ArrayList<Level> levelList = new ArrayList<>();
-    Level l1 = new Level("Bewegung", 3, true);
-    Level l2 = new Level("Labyrinth", 3, true);
-    Level l3 = new Level("Schleimer", 2, true);
-    Level l4 = new Level("Spiegelgeist", 0, false);
-    Level l5 = new Level("Text", 0, false);
-    Level l6 = new Level("Wand", 0, false);
 
     public MenuModel() {
-        this.levelList.add(l1);
-        this.levelList.add(l2);
-        this.levelList.add(l3);
-        this.levelList.add(l4);
-        this.levelList.add(l5);
-        this.levelList.add(l6);
-
+     //levelinfos muss hier hin
+        int numberOfLevels = 12;
+       // ArrayList<Level> levelList = new ArrayList<>();
+        this.levelList = new ArrayList<>();
+        //Liest Ordner mit Leveln ein
+        try {
+            File f = new File("./src/JSONLevels/");
+            File [] fileArray = f.listFiles();
+            //erstellt entsprechende Level
+            for(int i = 0; i < fileArray.length ; i++){
+                String name = fileArray[i].getName();
+                String ausgabe = name.substring(0, name.indexOf('.'));
+                Level level = new Level(ausgabe,0,true);
+                level.setLevelNummer(i);
+                levelList.add(level);
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        freischalten(0); // macht das erste Level spielbar
     }
-    public  void addScore (int i){
+
+    public void freischalten(int i){
+        levelList.get(i).setLevelPlayed(true);
+    }
+
+
+    public void addScore(int i) {
         punkte = punkte + i;
     }
 
-    public int getPunkte() { return punkte; }}
+    public int getPunkte() {
+        return punkte;
+    }
+
+}

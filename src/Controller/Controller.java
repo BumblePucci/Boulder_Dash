@@ -2,8 +2,6 @@ package Controller;
 
 import Menu.Level;
 import Menu.MenuController;
-import Model.Daten;
-import Model.Hauptregeln.Spielerbewegung;
 import Model.LevelModel;
 import View.LevelView;
 import javafx.animation.KeyFrame;
@@ -12,6 +10,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -25,72 +24,53 @@ public class Controller implements Observer {
     private boolean shift;
     private boolean doorIsOpen;
     private  int pGes;
+    private boolean levelNichtBesetzt;
+
+    //alle gedrückten Keys, weil es mehrere sein können und manchmal sein müssen, wird hier eine Liste erstellt
+    private ArrayList<KeyCode> pressedKeys = new ArrayList<>();
+
 
     public Controller(LevelModel levelModel, LevelView levelView) {
         this.levelModel = levelModel;
         this.levelView = levelView;
-        this.levelModel = levelModel;
         this.menuController = menuController;
         this.level = level;
         shift = false;
         doorIsOpen = false;
         pGes = 0;
+        this.levelNichtBesetzt = true;
 
 
         this.levelView.getStage().addEventHandler(KeyEvent.KEY_PRESSED, ev -> {
-            if (ev.getCode()== KeyCode.SHIFT) {
-                shift = true;
+            //wenn die Liste der gedrückten Keys den aktuell gedrückten Key nicht enthält, wird dieser hinzugefügt
+            if (!pressedKeys.contains(ev.getCode())) {
+                pressedKeys.add(ev.getCode());
             }
-            if (ev.getCode() == KeyCode.RIGHT) {
-                if (shift) {
-                    this.levelModel.setPfeil(SRIGHT);
-                    shift = false;
-                } else {
-                    this.levelModel.setPfeil(RIGHT);
-                }
-            }
+            //immer wenn ein Key neu gedrückt wird, wird setPfeilOnInput ausgeführt
+            setPfeilOnInput();
+        });
 
-            if (ev.getCode() == KeyCode.LEFT) {
-                if (shift) {
-                    this.levelModel.setPfeil(SLEFT);
-                    shift = false;
-                } else {
-                    this.levelModel.setPfeil(LEFT);
-                }
-            }
 
-            if (ev.getCode() == KeyCode.UP) {
-                if (shift) {
-                    this.levelModel.setPfeil(SUP);
-                    shift = false;
-                } else {
-                    this.levelModel.setPfeil(UP);
-                }
-            }
-
-            if (ev.getCode() == KeyCode.DOWN) {
-                if (shift) {
-                    this.levelModel.setPfeil(SDOWN);
-                    shift = false;
-                } else {
-                    this.levelModel.setPfeil(DOWN);
-                }
-            }
+        this.levelView.getStage().addEventHandler(KeyEvent.KEY_TYPED, ev -> {
 
         });
 
 
         this.levelView.getStage().addEventHandler(KeyEvent.KEY_RELEASED, ev -> {
-            if (ev.getCode()==KeyCode.SHIFT) {
-                this.levelModel.setPfeil(NO);
-            }
+            //lösche den aktuellen Key aus der Liste der gedrückten Keys,
+            //immer wenn ein Key los gelassen wird, wird setPfeilOnInput ausgeführt
+            pressedKeys.remove(ev.getCode());
+            setPfeilOnInput();
         });
 
 
         KeyFrame drawframe = new KeyFrame(Duration.seconds(1/(5* levelModel.getTick())), event -> {
         //KeyFrame drawframe = new KeyFrame(Duration.seconds(1), event -> {
-            levelModel.update();
+            System.out.print(levelModel);
             levelModel.reset();
+            levelModel.pre();
+            levelModel.update();
+            levelModel.post();
             System.out.print(levelModel);
             System.out.println("-");
 
@@ -101,9 +81,63 @@ public class Controller implements Observer {
 
         levelModel.addObserver(this);
         levelModel.addObserver(levelView);
-        //Todo Nötige Observer
         levelView.getStage().show();
     }
+
+    private void setPfeilOnInput() {
+        //shift ist true, wenn pressedKeys die Taste Shift enthält
+        shift = pressedKeys.contains(KeyCode.SHIFT);
+        //enthält pressedKeys die Taste Right...
+        if (pressedKeys.contains(KeyCode.RIGHT)) {
+            //...und ist shift true, dann wird pfeil auf SRIGHT gesetzt
+            if (shift) {
+                this.levelModel.setPfeil(SRIGHT);
+
+            //...und shift ist false, dann wird pfeil auf RIGHT gesetzt
+            } else {
+                this.levelModel.setPfeil(RIGHT);
+            }
+        } else if (pressedKeys.contains(KeyCode.LEFT)) {
+            if (shift) {
+                this.levelModel.setPfeil(SLEFT);
+            } else {
+                this.levelModel.setPfeil(LEFT);
+            }
+        } else if (pressedKeys.contains(KeyCode.UP)) {
+            if (shift) {
+                this.levelModel.setPfeil(SUP);
+            } else {
+                this.levelModel.setPfeil(UP);
+            }
+        } else if (pressedKeys.contains(KeyCode.DOWN)) {
+            if (shift) {
+                this.levelModel.setPfeil(SDOWN);
+                shift = false;
+            } else {
+                this.levelModel.setPfeil(DOWN);
+            }
+
+        //ist keine Pfeiltaste gedrückt, so wird pfeil auf NO gesetzt
+        } else {
+            this.levelModel.setPfeil(NO);
+        }
+    }
+    // Setzt die Gem und Time werte in der Level Klasse auf die richtigen Werte
+    public void setLevelData(){
+        int gem[] = levelModel.getGems();
+        int time[] = levelModel.getTicks();
+
+        level.setMinGems(gem[0]);
+        level.setMidGems(gem[1]);
+        level.setMaxGems(gem[2]);
+        level.setMinTime(time[0]);
+        level.setMidTime(time[1]);
+        level.setMaxTime(time[2]);
+
+        levelNichtBesetzt = false;
+    }
+
+
 
     // Mathoden für Update
 
@@ -112,7 +146,7 @@ public class Controller implements Observer {
             doorIsOpen = true;
         }
     }
-    //todo Allgemeine reset methode ??
+        //todo Allgemeine reset methode ??
     public void resetDoor(){
             doorIsOpen = false;
     }
@@ -152,6 +186,7 @@ public class Controller implements Observer {
         }
 
         safeScore();
+        menuController.nextLevelFreischalten(level.getLevelNummer());
     }
     //TODO ANPASSEN
     // Speichert Punkte in Daten ab
@@ -164,6 +199,16 @@ public class Controller implements Observer {
 
     public void update(Observable o, Object arg){
 
+        if(levelNichtBesetzt){
+            setLevelData();
+        }
+        //todo umsetzen
+        /*
+        if(//bool wert das ME auf exit){
+        score();
+
+        //zurück zum menü
+        */
     }
 
     public boolean isDoorIsOpen() { return doorIsOpen;}
