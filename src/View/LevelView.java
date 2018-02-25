@@ -48,7 +48,7 @@ public class LevelView implements Observer {
         levelPane = new TilePane();
         levelPane.setPrefColumns(levelModel.getWidth());
         levelPane.setPrefRows(levelModel.getHeight());
-        levelPane.setStyle("-fx-background-color: brown;");
+        levelPane.setStyle("-fx-background-color: #472613;");
         levelPane.setMaxWidth(TILE_SIZE*levelModel.getWidth());
         levelPane.setMinWidth(TILE_SIZE*levelModel.getWidth());
         levelPane.setMaxHeight(TILE_SIZE*levelModel.getHeight());
@@ -58,7 +58,7 @@ public class LevelView implements Observer {
         minimap = new TilePane();
         minimap.setScaleX(0.2);
         minimap.setScaleY(0.2);
-        minimap.setStyle("-fx-background-color: brown;");
+        minimap.setStyle("-fx-background-color: #472613;");
         minimap.setStyle("-fx-border-color: black;" +
                          "-fx-border-width: 8;");
         fillPane(minimap);
@@ -81,7 +81,7 @@ public class LevelView implements Observer {
         ui.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         ui.getChildren().add(minimap);
         ui.getChildren().add(gemCount);
-        ui.setStyle("-fx-border-color: red;" +
+        ui.setStyle("-fx-border-color: #472613;" +
                 "-fx-border-width: 8;");
         window = new StackPane();
         window.setMaxSize(wLevelPane, hLevelPane);

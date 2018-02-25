@@ -17,7 +17,7 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
 
         JSON_Verarbeitung jsonVerarbeitung = new JSON_Verarbeitung(); //JSON-Files erst aufrufen, wenn im Menü auf jeweiliges Level geklickt wurde
-        String path = "./src/JSONLevels/gegner_test.json";                                      //dann auch alle anderen Paths setzen
+        String path = "./src/JSONLevels/text.json";                                      //dann auch alle anderen Paths setzen
         jsonVerarbeitung.load_json_file(path);//Path für Level 1, 2, 3,...
 
         final String name = jsonVerarbeitung.getName();
